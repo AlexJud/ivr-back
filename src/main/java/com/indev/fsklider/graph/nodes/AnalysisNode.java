@@ -5,9 +5,8 @@ import com.indev.fsklider.graph.context.Context;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class SystemNode extends Node{
+public class AnalysisNode extends Node{
     private String id;
     private List<Relation> edgeList;
     private Context context;
@@ -55,7 +54,7 @@ public class SystemNode extends Node{
 
     @Override
     public String toString() {
-        return "SystemNode{" +
+        return "AnalysisNode{" +
                 "id='" + id + '\'' +
                 ", edgeList=" + edgeList +
                 ", context=" + context +
@@ -80,38 +79,41 @@ public class SystemNode extends Node{
 
     @Override
     public Context run() {
-        if (checkUnconditional()) {
-            return context;
-        }
-        String recogResult = context.getRecogResult();
-        String missMatchId = null;
-        String transferId = null;
-        for (Relation relation : edgeList) {
-            if (relation.getMatch() == null) {
-                transferId = relation.getId();
-            } else if (relation.getMatch().get(0).equals("-")) {
-                 missMatchId = relation.getId();
-//                continue;
-            } else {
-                HashMap<String, ArrayList<String>> map = relation.getMatchGroup();
-                for (String match : relation.getMatch()) {
-                    if (recogResult.contains(match)) {
-                        ArrayList<String> matchResult = context.getMatchResult();
-                        matchResult.add(match);
-                        context.setMatchResult(matchResult);
-                        context.setNextId(relation.getId());
-                        estate = true;
-                        return context;
-                    }
-                }
-            }
-        }
-        if (repeat < context.getRepeatMax()) {
-            repeat++;
-            context.setNextId(missMatchId != null ? missMatchId : transferId);
-        } else {
-            context.setNextId(transferId);
-        }
-        return context;
+
     }
+//    public Context run() {
+//        if (checkUnconditional()) {
+//            return context;
+//        }
+//        String recogResult = context.getRecogResult();
+//        String missMatchId = null;
+//        String transferId = null;
+//        for (Relation relation : edgeList) {
+//            if (relation.getMatch() == null) {
+//                transferId = relation.getId();
+//            } else if (relation.getMatch().get(0).equals("-")) {
+//                 missMatchId = relation.getId();
+////                continue;
+//            } else {
+//                HashMap<String, ArrayList<String>> map = relation.getMatchGroup();
+//                for (String match : relation.getMatch()) {
+//                    if (recogResult.contains(match)) {
+//                        ArrayList<String> matchResult = context.getMatchResult();
+//                        matchResult.add(match);
+//                        context.setMatchResult(matchResult);
+//                        context.setNextId(relation.getId());
+//                        estate = true;
+//                        return context;
+//                    }
+//                }
+//            }
+//        }
+//        if (repeat < context.getRepeatMax()) {
+//            repeat++;
+//            context.setNextId(missMatchId != null ? missMatchId : transferId);
+//        } else {
+//            context.setNextId(transferId);
+//        }
+//        return context;
+//    }
 }

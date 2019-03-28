@@ -34,10 +34,10 @@ public class GraphBuilder {
             JsonNode node = iterator.next();
 //            System.out.println(node.get("type").textValue());
             if (NodeType.valueOf(node.get("type").textValue()) == NodeType.REGULAR) {
-                RegularNode objectNode = mapper.treeToValue(node, RegularNode.class);
+                ActionNode objectNode = mapper.treeToValue(node, ActionNode.class);
                 graph.put(objectNode.getId(), objectNode);
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SYSTEM) {
-                SystemNode objectNode = mapper.treeToValue(node, SystemNode.class);
+                AnalysisNode objectNode = mapper.treeToValue(node, AnalysisNode.class);
                 graph.put(objectNode.getId(), objectNode);
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SEND) {
                 SendNode objectNode = mapper.treeToValue(node, SendNode.class);

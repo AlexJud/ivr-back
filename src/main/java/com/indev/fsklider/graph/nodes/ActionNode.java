@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class RegularNode extends Node {
+public class ActionNode extends Node {
     private String id;
     private List<String> props;
     private List<Relation> edgeList;
@@ -95,7 +95,7 @@ public class RegularNode extends Node {
 
     @Override
     public String toString() {
-        return "RegularNode{" +
+        return "ActionNode{" +
                 "id='" + id + '\'' +
                 ", props=" + props +
                 ", edgeList=" + edgeList +
@@ -103,7 +103,7 @@ public class RegularNode extends Node {
     }
 
     public static void main(String[] args) {
-        RegularNode node = new RegularNode();
+        ActionNode node = new ActionNode();
         node.props = new ArrayList<>();
         node.props.add("asdas");
         node.props.add("a111");

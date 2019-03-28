@@ -1,12 +1,14 @@
 package com.indev.fsklider.graph.context;
 
 import com.indev.fsklider.graph.results.Command;
+import com.indev.fsklider.graph.results.DialogResult;
 
 import java.util.ArrayList;
 import java.util.Stack;
 
 public class Context {
     private String recogResult;
+    private DialogResult result =new DialogResult();
     private ArrayList<String> matchResult = new ArrayList<>();
     private Stack<Command> commands = new Stack<>();
     private String nextId;
@@ -64,5 +66,13 @@ public class Context {
 
     public void setPreviousId(String previousId) {
         this.previousId = previousId;
+    }
+
+    public DialogResult getResult() {
+        return result;
+    }
+
+    public void setResult(DialogResult result) {
+        this.result = result;
     }
 }
