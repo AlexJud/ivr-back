@@ -5,6 +5,7 @@ public class DialogResult {
     private String reason;
     private String name;
     private String source;
+    private String number;
     private boolean isSale;
     private boolean isSupport;
     private boolean isTransfer;
@@ -47,6 +48,14 @@ public class DialogResult {
 
     public void setSale(boolean sale) {
         isSale = sale;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public boolean isSupport() {

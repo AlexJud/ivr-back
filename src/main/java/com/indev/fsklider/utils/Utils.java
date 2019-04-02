@@ -7,9 +7,9 @@ import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Properties;
 
 public class Utils {
@@ -47,4 +47,24 @@ public class Utils {
         }
         return result;
     }
+
+    public static String getName(String recognition, String filename) {
+        ArrayList<String> strings = new ArrayList<>();
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/src/main/resources/" + filename));
+            while (in.ready()) {
+                String name = in.readLine();
+                if (recognition.contains(name)) {
+                    strings.add(name);
+                    strings.sort(Comparator.comparingInt(s -> Math.abs(s.length() - "intelligent".length())));
+                } else {
+                    return null;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return strings.get(0);
+    }
+
 }

@@ -1,5 +1,5 @@
 package com.indev.fsklider.graph.nodes;
 
 public enum NodeType {
-    REGULAR, SYSTEM, SEND, TRANSFER, CONTEXT, REPEAT
+    ACTION, ANALYSIS, CLASSIFIER, EXTRACT, VALIDATE, SEND, TRANSFER
 }

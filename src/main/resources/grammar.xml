@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<grammar xmlns="http://www.w3.org/2001/06/grammar" xml:lang="ru-RU" version="1.0" mode="voice" root="digit">
+    <rule id="digit">
+        <one-of>
+            <item><ruleref special="GARBAGE"/><ruleref uri="#source"/><ruleref special="GARBAGE"/><ruleref uri="#buy"/><ruleref special="GARBAGE"/><ruleref uri="#estate"/></item>
+            <item><ruleref special="GARBAGE"/><ruleref uri="#support"/></item>
+            <item><ruleref special="GARBAGE"/><ruleref uri="#transfer"/></item>
+        </one-of>
+    </rule>
+    <rule id="estate">
+        <one-of>
+            <item>новогиреевский</item>
+            <item>новогиреевском</item>
+            <item>балашиха</item>
+            <item>балашихе</item>
+            <item>сколсковский</item>
+            <item>сколсковском</item>
+            <item>одинцово</item>
+            <item>одинцовский</item>
+            <item>римский</item>
+            <item>римском</item>
+            <item>домодедовская</item>
+            <item>домодедовском</item>
+            <item>дыхание</item>
+            <item>дыхании</item>
+            <item>мытищи</item>
+            <item>мытищах</item>
+            <item>бибирево</item>
+            <item>раменском</item>
+            <item>раменский</item>
+            <item>раменский</item>
+            <item>фабричная</item>
+            <item>фабричном</item>
+            <item>мытищах</item>
+            <item>скандинавский</item>
+            <item>скандинавском</item>
+            <item>медведково</item>
+            <item>медведковский</item>
+            <item>развилка</item>
+            <item>развилке</item>
+            <item>тимирязевская</item>
+            <item>тимирязевский</item>
+            <item>тимирязевском</item>
+            <item>датский</item>
+            <item>датском</item>
+        </one-of>
+    </rule>
+    <rule id="support">
+        <one-of>
+            <item>выдаче</item>
+            <item>ключей</item>
+            <item>ключи</item>
+            <item>сдаче</item>
+            <item>заселении</item>
+            <item>заселиться</item>
+            <item>заселяться</item>
+            <item>заселение</item>
+            <item>сдача</item>
+            <item>выдача</item>
+            <item>ключ</item>
+        </one-of>
+    </rule>
+    <rule id="buy">
+        <one-of>
+            <item>купить</item>
+            <item>покупка</item>
+            <item>приобрести</item>
+            <item>продажа</item>
+            <item>продаже</item>
+            <item>покупке</item>
+            <item>приобретении</item>
+        </one-of>
+    </rule>
+    <rule id="transfer">
+        <one-of>
+            <item>перевод</item>
+            <item>перевести</item>
+            <item>соединить</item>
+            <item>соедините</item>
+            <item>соедини</item>
+            <item>переведи</item>
+        </one-of>
+    </rule>
+    <rule id="source">
+        <one-of>
+            <item>интернет</item>
+            <item>перевести</item>
+            <item>соединить</item>
+            <item>соедините</item>
+            <item>соедини</item>
+            <item>переведи</item>
+        </one-of>
+    </rule>
+</grammar>

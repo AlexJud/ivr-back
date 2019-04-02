@@ -1,39 +1,54 @@
 [
   {
     "id": "root",
-    "type": "Action",
+    "type": "ACTION",
     "props": ["Единый call-центр\\, меня зовут Алёна\\, чем могу помочь?", "/etc/asterisk/grammar.xml,f=beep&b=1&i=any"]
   },
   {
     "id": "check_estate",
-    "type": "Analysis",
+    "type": "ANALYSIS",
     "props":["Балашиха", "Балашихе", "Мытищи", "Мытищах", "Дыхание", "Дыхании", "Новогиреевский", "Новогиреевском", "Сколсковский", "Сколсковском", "Одинцово",
       "Одинцовский", "Римский", "Римском", "Развилка", "Развилке", "Домодедовская", "Домодедовском", "Домодедовский", "Тимирязевская", "Тимирязевском", "Датский",
       "Датском", "Бибирево", "Раменском", "Раменский", "Фабричная", "Фабричном", "Скандинавский", "Скандинавском", "Медведково", "Медведковский"]
   },
   {
     "id": "check_buy",
-    "type": "Analysis",
-    "props": ["Купить", "Продажу", "Продаж", "Приобрести", "Продаёте"]
+    "type": "ANALYSIS",
+    "props": ["купить", "продажу", "продаж", "приобрести", "продаёте"]
+  },
+  {
+    "id": "check_support",
+    "type": "ANALYSIS",
+    "props": ["сдача", "ключи", "выдача", "ключей", "сдаче", "выдаче", "ключ"]
+  },
+  {
+    "id": "check_transfer",
+    "type": "ANALYSIS",
+    "props": ["переведите", "перевести"]
   },
   {
     "id": "check_name",
-    "type": "Analysis",
+    "type": "ANALYSIS",
     "props": []
   },
   {
+    "id": "check_name_template",
+    "type": "ANALYSIS",
+    "props": ["russian_names.csv"]
+  },
+  {
     "id": "check_source",
-    "type": "Analysis",
+    "type": "ANALYSIS",
     "props": []
   },
   {
     "id": "ask_buy",
-    "type": "Action",
+    "type": "ACTION",
     "props": ["Вы хотите проконсультироваться с целью приобретения?", "/etc/asterisk/grammar.xml,f=beep&b=1&i=any"]
   },
   {
     "id": "check_yes",
-    "type": "Analysis",
+    "type": "ANALYSIS",
     "props": [
       "yes",
       "да",
@@ -44,18 +59,33 @@
   },
   {
     "id": "check_no",
-    "type": "Analysis",
+    "type": "ANALYSIS",
     "props": ["no", "нет", "неа"]
   },
   {
+    "id": "check_number",
+    "type": "ANALYSIS",
+    "props": []
+  },
+  {
+    "id": "ask_estate",
+    "type": "ACTION",
+    "props": ["Какой жилой комплекс вас интересует?", "/etc/asterisk/grammar.xml,f=beep&b=1&i=any"]
+  },
+  {
     "id": "ask_name",
-    "type": "Action",
+    "type": "ACTION",
     "props": ["Как я могу к вам обращаться\\, представьтесь пожалуйста?", "http://localhost/theme:graph,f=beep&b=1&i=any"]
   },
   {
     "id": "ask_source",
-    "type": "Action",
+    "type": "ACTION",
     "props": ["Уточните источник рекламы\\, откуда вы о нас узнали", "http://localhost/theme:graph,f=beep&b=1&i=any"]
+  },
+  {
+    "id": "ask_number",
+    "type": "ACTION",
+    "props": ["Знаете ли вы внутренний номер сотрудника?", "http://localhost/theme:graph,f=beep&b=1&i=any"]
   },
   {
     "id": "transfer",
@@ -69,7 +99,7 @@
   },
   {
     "id": "repeat",
-    "type": "Action",
+    "type": "ACTION",
     "props": ["Пожалуйста повторите", "/etc/asterisk/grammar.xml,f=beep&b=1&i=any"]
   }
 ]

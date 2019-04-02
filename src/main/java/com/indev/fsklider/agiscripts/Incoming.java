@@ -3,7 +3,6 @@ package com.indev.fsklider.agiscripts;
 import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.GraphExecutor;
 import com.indev.fsklider.graph.context.Context;
-import com.indev.fsklider.graph.nodes.CallTransferNode;
 import com.indev.fsklider.graph.nodes.Node;
 import com.indev.fsklider.graph.results.Command;
 import com.indev.fsklider.propeties.Property;
@@ -12,38 +11,48 @@ import org.asteriskjava.fastagi.AgiChannel;
 import org.asteriskjava.fastagi.AgiException;
 import org.asteriskjava.fastagi.AgiRequest;
 import org.asteriskjava.fastagi.BaseAgiScript;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 @Service
 public class Incoming extends BaseAgiScript {
 
+
     public void service(AgiRequest request, AgiChannel channel) throws AgiException {
         try {
-            Context context = new Context();
             answer();
-            GraphBuilder builder = new GraphBuilder(System.getProperty("user.dir"));
+            Node currentNode;
+            Context context = new Context();
             try {
-                GraphExecutor executor = new GraphExecutor(builder.getGraph());
+                GraphBuilder builder = new GraphBuilder(System.getProperty("user.dir"));
+                Map<String, Node> graph = builder.getGraph();
                 context.setEnd(false);
+                String nextId = "root";
                 while (!context.isEnd()) {
-                    executor.setContext(context);
-                    Node currentNode = executor.getNext();
+                    if (nextId == null) {
+                        break;
+                    }
+                    currentNode = graph.get(nextId);
                     currentNode.setContext(context);
-                    System.out.println("context: " + currentNode.getContext().getMatchResult());
-                    System.out.println("context: " + currentNode.getContext().getRecogResult());
-                    context = currentNode.run();
-//                    if (context.getCommands() != null) {
-                    Stack<Command> commands = context.getCommands();
-                    while (!commands.empty()) {
-                        Command command = commands.pop();
-                        System.out.println("Команда: " + command.getApp());
-                        System.out.println("Опции: " + command.getOption());
-                        exec(command.getApp(), command.getOption());
-                        context.setRecogResult(getVariable("RECOG_RESULT"));
+                    nextId = currentNode.run();
+                    context = currentNode.getContext();
+                    if (!context.getCommands().empty()) {
+                        Stack<Command> commands = context.getCommands();
+                        while (!commands.empty()) {
+                            Command command = commands.pop();
+                            System.out.println("Команда: " + command.getApp());
+                            System.out.println("Опции: " + command.getOption());
+                            exec(command.getApp(), command.getOption());
+                            context.setRecogResult(getVariable("RECOG_RESULT"));
+                        }
+                        System.out.println(getVariable("RECOG_RESULT"));
                     }
                 }
+                context.setContextMap(new HashMap<>());
                 hangup();
             } catch (Exception e) {
                 e.printStackTrace();

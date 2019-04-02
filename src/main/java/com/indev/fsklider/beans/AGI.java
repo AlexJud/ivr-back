@@ -1,3 +1,4 @@
+/*
 package com.indev.fsklider.beans;
 
 import org.asteriskjava.Cli;
@@ -44,3 +45,4 @@ public class AGI extends Cli implements CommandLineRunner {
         }
     }
 }
+*/

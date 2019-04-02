@@ -1,20 +1,15 @@
 package com.indev.fsklider.graph.nodes;
 
 import com.indev.fsklider.graph.context.Context;
+import com.indev.fsklider.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class AnalysisNode extends Node{
     private String id;
-    private List<Relation> edgeList;
+    private ArrayList<String> props;
     private Context context;
     private Integer repeat = 0;
-    private String next;
-    private boolean estate = false;
-    private boolean keyWord = false;
-    public final boolean isCommand = false;
 
     public String getId() {
         return id;
@@ -24,12 +19,12 @@ public class AnalysisNode extends Node{
         this.id = id;
     }
 
-    public List<Relation> getEdgeList() {
-        return edgeList;
+    public ArrayList<String> getProps() {
+        return props;
     }
 
-    public void setEdgeList(List<Relation> edgeList) {
-        this.edgeList = edgeList;
+    public void setProps(ArrayList<String> props) {
+        this.props = props;
     }
 
     @Override
@@ -53,33 +48,46 @@ public class AnalysisNode extends Node{
     }
 
     @Override
-    public String toString() {
-        return "AnalysisNode{" +
-                "id='" + id + '\'' +
-                ", edgeList=" + edgeList +
-                ", context=" + context +
-                ", repeat=" + repeat +
-                ", next='" + next + '\'' +
-                ", isCommand=" + isCommand +
-                '}';
-    }
+    public String run() {
+        String recogResult = context.getRecogResult();
+        for (String match : props) {
+            // TODO Добавить для каждого типа свою проверку
+            switch (id) {
+                case "check_estate": {
+                    if (recogResult.contains(match)) {
+                        context.getResult().setEstate(match);
+                    }
+                    break;
+                }
+                case "check_name" : {
+                    context.getResult().setName(Utils.getMessage(context.getRecogResult()));
+                    break;
+                }
+                case "check_name_template" : {
+                    String name = Utils.getName(context.getRecogResult(), props.get(0));
+                    context.getResult().setName(name);
+                    break;
+                }
+                case "check_source": {
+                    context.getResult().setSource(match);
+                    break;
+                }
+                case "check_number": {
+                    context.getResult().setNumber(Utils.getMessage(context.getRecogResult()));
+                    break;
+                }
+                case "check_yes": {
 
-    private boolean checkUnconditional() {
-        if (edgeList != null) {
-            if (edgeList.size() == 1) {
-                context.setNextId(edgeList.get(0).getId());
-                return true;
+                }
+                case "check_no": {
+
+                }
+                default:
+                    context.getResult().setReason(match);
+                    break;
             }
-            return false;
-        } else {
-            context.setNextId(context.getPreviousId());
-            return true;
         }
-    }
-
-    @Override
-    public Context run() {
-
+        return "";
     }
 //    public Context run() {
 //        if (checkUnconditional()) {
