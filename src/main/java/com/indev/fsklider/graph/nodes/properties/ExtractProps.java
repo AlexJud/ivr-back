@@ -1,9 +1,10 @@
-package com.indev.fsklider.graph.nodes;
+package com.indev.fsklider.graph.nodes.properties;
 
 import java.util.ArrayList;
 
 public class ExtractProps {
     private String varName;
+    private String rawVarName;
     private ArrayList<String> match;
     private String matchFile;
 
@@ -17,6 +18,14 @@ public class ExtractProps {
 
     public ArrayList<String> getMatch() {
         return match;
+    }
+
+    public String getRawVarName() {
+        return rawVarName;
+    }
+
+    public void setRawVarName(String rawVarName) {
+        this.rawVarName = rawVarName;
     }
 
     public void setMatch(ArrayList<String> match) {

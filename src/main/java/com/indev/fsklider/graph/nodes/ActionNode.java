@@ -9,7 +9,6 @@ import java.util.Stack;
 @Component
 public class ActionNode extends Node {
     private List<String> props;
-    private Integer repeat = 0;
 
     public List<String> getProps() {
         return props;
@@ -17,16 +16,6 @@ public class ActionNode extends Node {
 
     public void setProps(List<String> props) {
         this.props = props;
-    }
-
-    @Override
-    public Integer getRepeat() {
-        return repeat;
-    }
-
-    @Override
-    public void setRepeat(Integer repeat) {
-        this.repeat = repeat;
     }
 
     private String checkUnconditional() {
@@ -46,29 +35,23 @@ public class ActionNode extends Node {
     public String run() {
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();
-        if (repeat == 0) {
-            command.setApp("MRCPRecog");
-            command.setOption(props.get(1));
-            commandList.push(command);
-            command = new Command();
-            command.setApp("MRCPSynth");
-            command.setOption(props.get(0));
+        if (getRepeat() == 0) {
+            command.setApp("SynthAndRecog");
+            String text = replaceVar(props.get(0));
+            command.setOption(text + ", " +  props.get(1));
+            getContext().getEvent().setSystemText(text);
             commandList.push(command);
         } else {
-            command.setApp("MRCPRecog");
-            command.setOption("http://localhost/theme:graph,f=beep&b=1&i=any");
+            command.setApp("SynthAndRecog");
+            command.setOption("Пожалуйста\\, повторите," + "http://localhost/theme:graph,b=1&t=5000&nit=5000");
+            getContext().getEvent().setSystemText("Пожалуйста, повторите");
             commandList.push(command);
-            command = new Command();
-            command.setApp("MRCPSynth");
-            command.setOption("Пожалуйста\\, повторите");
-            commandList.push(command);
-            repeat = 0;
+            setRepeat(0);
             getContext().setNotRepeat(true);
         }
 
         getContext().setCommands(commandList);
-        System.out.println(commandList); //TODO Delete this debug
-        repeat++;
+        setRepeat(getRepeat() + 1);
         return calculateNext();
     }
 
@@ -79,13 +62,5 @@ public class ActionNode extends Node {
                 ", props=" + props +
                 ", edgeList=" + getEdgeList() +
                 '}';
-    }
-
-    public static void main(String[] args) {
-//        ActionNode node = new ActionNode();
-//        node.props = new ArrayList<>();
-//        node.props.add("asdas");
-//        node.props.add("a111");
-//        node.run();
     }
 }

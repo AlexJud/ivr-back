@@ -1,4 +1,4 @@
-package com.indev.fsklider.graph.nodes;
+package com.indev.fsklider.graph.nodes.properties;
 
 import java.util.ArrayList;
 

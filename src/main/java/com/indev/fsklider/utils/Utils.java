@@ -66,5 +66,4 @@ public class Utils {
         }
         return strings.get(0);
     }
-
 }

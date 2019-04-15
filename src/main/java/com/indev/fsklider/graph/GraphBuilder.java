@@ -42,7 +42,6 @@ public class GraphBuilder {
                 ClassifierNode objectNode = mapper.treeToValue(node, ClassifierNode.class);
                 graph.put(objectNode.getId(), objectNode);
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.EXTRACT) {
-                System.out.println("Props extract node " + node.get("props"));
                 ExtractNode objectNode = mapper.treeToValue(node, ExtractNode.class);
                 graph.put(objectNode.getId(), objectNode);
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.VALIDATE) {

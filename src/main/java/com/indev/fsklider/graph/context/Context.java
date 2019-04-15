@@ -1,11 +1,11 @@
 package com.indev.fsklider.graph.context;
 
+import com.indev.fsklider.beans.ResponseEvent;
 import com.indev.fsklider.graph.results.Command;
 import com.indev.fsklider.graph.results.DialogResult;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -14,13 +14,34 @@ import java.util.Stack;
 public class Context {
     private HashMap<String, String> contextMap = new HashMap<>();
     private String recogResult;
-    private DialogResult result =new DialogResult();
-    private ArrayList<String> matchResult = new ArrayList<>();
+    private DialogResult result = new DialogResult();
     private Stack<Command> commands = new Stack<>();
+    private String name;
     private String nextId;
     private String previousId;
+    private ResponseEvent event = new ResponseEvent();
     private boolean notRepeat = false;
     private boolean isEnd;
+
+    public ResponseEvent getEvent() {
+        return event;
+    }
+
+    public void setEvent(ResponseEvent event) {
+        this.event = event;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isNotRepeat() {
+        return notRepeat;
+    }
 
     public HashMap<String, String> getContextMap() {
         return contextMap;
@@ -38,24 +59,12 @@ public class Context {
         this.recogResult = recogResult;
     }
 
-    public ArrayList<String> getMatchResult() {
-        return matchResult;
-    }
-
-    public void setMatchResult(ArrayList<String> matchResult) {
-        this.matchResult = matchResult;
-    }
-
     public boolean isEnd() {
         return isEnd;
     }
 
     public void setEnd(boolean end) {
         isEnd = end;
-    }
-
-    public Integer getRepeatMax() {
-        return 1;
     }
 
     public Stack<Command> getCommands() {

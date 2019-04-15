@@ -1,6 +1,7 @@
 package com.indev.fsklider.graph.nodes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.indev.fsklider.graph.nodes.properties.ExtractProps;
 import com.indev.fsklider.utils.Utils;
 
 import java.io.BufferedReader;
@@ -12,6 +13,14 @@ import java.util.Comparator;
 public class ExtractNode extends Node {
     @JsonProperty("props")
     private ExtractProps props;
+
+    public ExtractProps getProps() {
+        return props;
+    }
+
+    public void setProps(ExtractProps props) {
+        this.props = props;
+    }
 
     @Override
     public String run() {
@@ -31,6 +40,8 @@ public class ExtractNode extends Node {
                         strings.add(name);
                         strings.sort(Comparator.comparingInt(s -> Math.abs(s.length() - "intelligent".length())));
                         getContext().getContextMap().put(props.getVarName(), strings.get(0));
+                        System.out.println("+++++++++++ CONTEXT FROM EXTRACT ++++++++++ " + getContext().getContextMap());
+                        getContext().setName(strings.get(0));
 //                        contextMap.put();
 //                        getContext().setContextMap(contextMap);
                     }
@@ -54,7 +65,7 @@ public class ExtractNode extends Node {
 
     public void getRawRecognize(String asrResult) {
         String message = Utils.getMessage(asrResult);
-        getContext().getContextMap().put(props.getVarName(), message);
+        getContext().getContextMap().put(props.getRawVarName(), message);
         getContext().setNotRepeat(false);
     }
 

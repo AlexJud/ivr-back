@@ -29,7 +29,9 @@ public class TransferNode extends Node{
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();
         command.setApp("MRCPSynth");
-        command.setOption(props.get(0));
+        String text = replaceVar(props.get(0));
+        command.setOption(text);
+        getContext().getEvent().setSystemText(text);
         commandList.push(command);
         command = new Command();
         command.setApp("Hangup");
@@ -37,4 +39,5 @@ public class TransferNode extends Node{
         calculateNext();
         return null;
     }
+
 }

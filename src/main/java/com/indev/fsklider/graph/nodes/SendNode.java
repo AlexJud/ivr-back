@@ -1,5 +1,6 @@
 package com.indev.fsklider.graph.nodes;
 
+import com.indev.fsklider.graph.nodes.properties.SendProps;
 import com.indev.fsklider.services.HttpHelper;
 
 public class SendNode extends Node {

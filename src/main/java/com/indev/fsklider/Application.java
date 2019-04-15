@@ -24,7 +24,6 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
 //    @Bean
 //    public Executor taskExecutor() {
 //        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -35,33 +34,4 @@ public class Application {
 //        executor.initialize();
 //        return executor;
 //    }
-
-    @Bean
-    public GraphExecutor graphExecutor(Map<String, Node> graph) {
-        GraphBuilder graphBuilder = new GraphBuilder(System.getProperty("user.dir"));
-        try {
-            return new GraphExecutor(graphBuilder);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Bean
-    public AgiServerThread agiServerThread(){
-        AgiServerThread agiServerThread = new AgiServerThread(getDefaultAgiServer());
-        agiServerThread.startup();
-        return agiServerThread;
-    }
-
-    @Bean
-    public DefaultAgiServer getDefaultAgiServer(){
-        return new DefaultAgiServer(getAsteriskAgiScript());
-    }
-
-    @Bean
-    public AgiScript getAsteriskAgiScript(){
-        return new Incoming();
-    }
-
 }

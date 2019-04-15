@@ -2,10 +2,43 @@
 <grammar xmlns="http://www.w3.org/2001/06/grammar" xml:lang="ru-RU" version="1.0" mode="voice" root="digit">
     <rule id="digit">
         <one-of>
-            <item><ruleref special="GARBAGE"/><ruleref uri="#source"/><ruleref special="GARBAGE"/><ruleref uri="#buy"/><ruleref special="GARBAGE"/><ruleref uri="#estate"/></item>
-            <item><ruleref special="GARBAGE"/><ruleref uri="#support"/></item>
-            <item><ruleref special="GARBAGE"/><ruleref uri="#transfer"/></item>
-        </one-of>
+            <item>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#source"/>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#buy"/>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#estate"/>
+                <ruleref special="GARBAGE"/>
+            </item>
+            <item>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#buy"/>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#estate"/>
+                <ruleref special="GARBAGE"/>
+            </item>
+            <item>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#buy"/>
+                <ruleref special="GARBAGE"/>
+            </item>
+            <item>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#estate"/>
+                <ruleref special="GARBAGE"/>
+            </item>
+            <item>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#support"/>
+                <ruleref special="GARBAGE"/>
+            </item>
+            <item>
+                <ruleref special="GARBAGE"/>
+                <ruleref uri="#transfer"/>
+                <ruleref special="GARBAGE"/>
+            </item>
+	</one-of>
     </rule>
     <rule id="estate">
         <one-of>
