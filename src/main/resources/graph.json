@@ -2,14 +2,14 @@
   {
     "id": "root",
     "type": "ACTION",
-    "props": ["Единый call-центр\\, меня зовут Владимир\\, чем могу помочь?", "/etc/asterisk/grammar.xml,spl=ru-RU&p=uni2"],
+    "props": ["Единый call-центр\\, меня зовут Алёна\\, чем могу помочь?", "/etc/asterisk/grammar.xml,b=1&t=5000&nit=5000"],
     "edgeList":[{
       "id": "classify"
     }]
   },
   {
     "id": "classify",
-    "type": "CLASSIFIER",add statemachine (not done)
+    "type": "CLASSIFIER",
     "edgeList": [
       {
         "id": "buy_ext_estate",
@@ -128,7 +128,7 @@
   {
     "id": "buy_ask_name",
     "type": "ACTION",
-    "props": ["Отличное решение! Подскажите\\, как я могу к вам обращаться?", "builtin:speech/transcribe,spl=ru-RU&f=beep&p=uni2"],
+    "props": ["Отличное решение! Подскажите\\, как я могу к вам обращаться?", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
     "edgeList": [
       {
         "id": "buy_ext_name"
@@ -138,7 +138,7 @@
   {
     "id": "buy_ask_estate",
     "type": "ACTION",
-    "props": ["@person# какой жилой комплекс вас интересует?", "builtin:speech/transcribe,spl=ru-RU&f=beep&p=uni2"],
+    "props": ["@person# какой жилой комплекс вас интересует?", "/etc/asterisk/grammar.xml,b=1&t=5000&nit=5000"],
     "edgeList": [
       {
         "id": "buy_ext_estate"
@@ -148,7 +148,7 @@
   {
     "id": "buy_ask_source",
     "type": "ACTION",
-    "props": ["@person# уточните источник рекламы\\, откуда вы о нас узнали", "builtin:speech/transcribe,spl=ru-RU&f=beep&p=uni2"],
+    "props": ["@person# уточните источник рекламы\\, откуда вы о нас узнали", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
     "edgeList": [
       {
         "id": "buy_ext_source"
@@ -199,7 +199,7 @@
   {
     "id": "support_ask_person",
     "type": "ACTION",
-    "props": ["Как я могу к вам обращаться\\, представьтесь пожалуйста?", "builtin:speech/transcribe,spl=ru-RU&f=beep&p=uni2"],
+    "props": ["Как я могу к вам обращаться\\, представьтесь пожалуйста?", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
     "edgeList": [
       {
         "id": "support_ext_name"
@@ -236,7 +236,7 @@
   {
     "id": "transfer_ask_number",
     "type": "ACTION",
-    "props": ["Назовите внутренний номер сотрудника", "builtin:speech/transcribe,spl=ru-RU&f=beep&p=uni2"],
+    "props": ["Назовите внутренний номер сотрудника", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
     "edgeList": [
       {
         "id": "transfer_ext_number"
@@ -246,21 +246,21 @@
   {
     "id": "transfer",
     "type": "TRANSFER",
-    "props": ["@person# перевожу Ваш звонок на менеджера\\, оставайтесь на линии,l=ru-RU&p=uni2"]
+    "props": ["@person# перевожу Ваш звонок на менеджера\\, оставайтесь на линии"]
   },
   {
     "id": "unknown",
     "type": "TRANSFER",
-    "props": ["Я соединю вас с оператором оставайтесь на линии,l=ru-RU&p=uni2"]
+    "props": ["Я соединю вас с оператором оставайтесь на линии"]
   },
   {
     "id": "support_transfer",
     "type": "TRANSFER",
-    "props":["@person# перевожу Ваш звонок в отдел сопровождения\\, оставайтесь на линии,l=ru-RU&p=uni2"]
+    "props":["@person# перевожу Ваш звонок в отдел сопровождения\\, оставайтесь на линии"]
   },
   {
     "id": "transfer_number",
     "type": "TRANSFER",
-    "props": ["Перевожу Ваш звонок\\, оставайтесь на линии,l=ru-RU&p=uni2"]
+    "props": ["Перевожу Ваш звонок\\, оставайтесь на линии"]
   }
 ]
