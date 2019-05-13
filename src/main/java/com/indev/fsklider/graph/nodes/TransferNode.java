@@ -24,7 +24,8 @@ public class TransferNode extends Node{
 
     @Override
     public String run() {
-        String message = Utils.getMessage(getContext().getRecogResult());
+//        String message = Utils.getMessage(getContext().getRecogResult());
+        String message = getContext().getRecogResult();
         getContext().getContextMap().put("message", message);
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();

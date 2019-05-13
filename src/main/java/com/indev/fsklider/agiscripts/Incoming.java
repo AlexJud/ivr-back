@@ -62,9 +62,8 @@ public class Incoming extends BaseAgiScript {
                             System.out.println("Команда: " + command.getApp());
                             System.out.println("Опции: " + command.getOption());
                             exec(command.getApp(), command.getOption());
-                            context.setRecogResult(getVariable("RECOG_RESULT"));
+                            context.setRecogResult(getVariable("RECOG_INPUT(0)"));
                         }
-                        System.out.println(getVariable("RECOG_RESULT"));
                     }
                 }
                 context.setContextMap(new HashMap<>());
@@ -101,7 +100,8 @@ public class Incoming extends BaseAgiScript {
         event.setType(EventType.ABONENT_SAY);
         event.setTokenList(context.getContextMap());
         event.setCallId(callerId);
-        String recog_result = Utils.getMessage(getVariable("RECOG_RESULT"));
+        String recog_result = getVariable("RECOG_INPUT(0)");
+//        String recog_result = Utils.getMessage(getVariable("RECOG_INPUT(0)"));
         event.setAbonentText(recog_result);
         http.doPost(event);
     }

@@ -28,7 +28,8 @@ public class AnalysisNode extends Node{
                     break;
                 }
                 case "check_name" : {
-                    getContext().getResult().setName(Utils.getMessage(getContext().getRecogResult()));
+//                    getContext().getResult().setName(Utils.getMessage(getContext().getRecogResult()));
+                    getContext().getResult().setName(getContext().getRecogResult());
                     break;
                 }
                 case "check_name_template" : {
@@ -41,7 +42,8 @@ public class AnalysisNode extends Node{
                     break;
                 }
                 case "check_number": {
-                    getContext().getResult().setNumber(Utils.getMessage(getContext().getRecogResult()));
+//                    getContext().getResult().setNumber(Utils.getMessage(getContext().getRecogResult()));
+                    getContext().getResult().setNumber(getContext().getRecogResult());
                     break;
                 }
                 case "check_yes": {

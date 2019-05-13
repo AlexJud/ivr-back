@@ -1,5 +1,6 @@
 package com.indev.fsklider.config;
 
+import com.indev.fsklider.agiscripts.GoogleServices;
 import com.indev.fsklider.agiscripts.Incoming;
 import org.asteriskjava.fastagi.AgiScript;
 import org.asteriskjava.fastagi.AgiServerThread;
@@ -23,6 +24,8 @@ public class BeanConfig {
 
     @Bean
     public AgiScript getAsteriskAgiScript(){
+//        return new Incoming();
         return new Incoming();
     }
+
 }

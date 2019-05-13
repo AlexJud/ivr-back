@@ -26,7 +26,8 @@ public class GraphBuilder {
         HashMap<String, Node> graph = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String filepath = filename + "/src/main/resources" + "/graph.json";
+        String filepath = filename + "/src/main/resources" + "/graph_google.json";
+//        String filepath = filename + "/src/main/resources" + "/graph.json";
         JsonNode rootNode = mapper.readValue(new FileInputStream(filepath), JsonNode.class);
         Iterator<JsonNode> iterator = rootNode.elements();
         while (iterator.hasNext()) {

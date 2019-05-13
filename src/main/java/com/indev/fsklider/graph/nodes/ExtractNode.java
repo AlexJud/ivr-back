@@ -64,7 +64,8 @@ public class ExtractNode extends Node {
     }
 
     public void getRawRecognize(String asrResult) {
-        String message = Utils.getMessage(asrResult);
+//        String message = Utils.getMessage(asrResult);
+        String message = asrResult;
         getContext().getContextMap().put(props.getRawVarName(), message);
         getContext().setNotRepeat(false);
     }

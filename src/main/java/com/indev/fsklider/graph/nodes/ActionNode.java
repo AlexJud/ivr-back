@@ -43,7 +43,8 @@ public class ActionNode extends Node {
             commandList.push(command);
         } else {
             command.setApp("SynthAndRecog");
-            command.setOption("Пожалуйста\\, повторите," + "http://localhost/theme:graph,b=1&t=5000&nit=5000");
+//            command.setOption("Пожалуйста\\, повторите," + "http://localhost/theme:graph,b=1&t=5000&nit=5000");
+            command.setOption("Пожалуйста\\, повторите," + "l=ru-RU&p=uni2");
             getContext().getEvent().setSystemText("Пожалуйста, повторите");
             commandList.push(command);
             setRepeat(0);
