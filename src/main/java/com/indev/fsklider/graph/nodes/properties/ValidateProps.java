@@ -21,4 +21,12 @@ public class ValidateProps {
     public void setEdgeIfSuccess(String edgeIfSuccess) {
         this.edgeIfSuccess = edgeIfSuccess;
     }
+
+    @Override
+    public String toString() {
+        return "ValidateProps{" +
+                "varList=" + varList +
+                ", edgeIfSuccess='" + edgeIfSuccess + '\'' +
+                '}';
+    }
 }

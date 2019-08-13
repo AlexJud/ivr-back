@@ -2,6 +2,8 @@ package com.indev.fsklider.config;
 
 import com.indev.fsklider.agiscripts.GoogleServices;
 import com.indev.fsklider.agiscripts.Incoming;
+import com.indev.fsklider.graph.nodes.ActionNode;
+import com.indev.fsklider.services.SocketService;
 import org.asteriskjava.fastagi.AgiScript;
 import org.asteriskjava.fastagi.AgiServerThread;
 import org.asteriskjava.fastagi.DefaultAgiServer;
@@ -28,4 +30,8 @@ public class BeanConfig {
         return new Incoming();
     }
 
+//    @Bean
+//    public SocketService getSocketService() {
+//        return new SocketService();
+//    }
 }

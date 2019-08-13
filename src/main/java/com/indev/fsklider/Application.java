@@ -1,23 +1,11 @@
 package com.indev.fsklider;
 
-import com.indev.fsklider.agiscripts.Incoming;
-import com.indev.fsklider.graph.GraphBuilder;
-import com.indev.fsklider.graph.context.Context;
-import com.indev.fsklider.graph.nodes.Node;
-import org.asteriskjava.fastagi.AgiScript;
-import org.asteriskjava.fastagi.AgiServerThread;
-import org.asteriskjava.fastagi.DefaultAgiServer;
-import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.Map;
-import java.util.concurrent.Executor;
-
-@SpringBootApplication
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 @EnableAsync
 public class Application {
     public static void main(String[] args) {

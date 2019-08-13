@@ -1,17 +1,9 @@
 package com.indev.fsklider.graph.nodes.properties;
 
 public class ActionProps {
-    private String preamble;
     private String synthText;
+    private String grammar;
     private String options;
-
-    public String getPreamble() {
-        return preamble;
-    }
-
-    public void setPreamble(String preamble) {
-        this.preamble = preamble;
-    }
 
     public String getSynthText() {
         return synthText;
@@ -21,11 +13,28 @@ public class ActionProps {
         this.synthText = synthText;
     }
 
+    public String getGrammar() {
+        return grammar;
+    }
+
+    public void setGrammar(String grammar) {
+        this.grammar = grammar;
+    }
+
     public String getOptions() {
         return options;
     }
 
     public void setOptions(String options) {
         this.options = options;
+    }
+
+    @Override
+    public String toString() {
+        return "ActionProps{" +
+                "synthText='" + synthText + '\'' +
+                ", grammar='" + grammar + '\'' +
+                ", options='" + options + '\'' +
+                '}';
     }
 }

@@ -26,6 +26,15 @@ public class ValidateNode extends Node {
                 return item.getEdgeIfEmpty();
             }
         }
+        System.out.println(getContext().getContextMap());
         return props.getEdgeIfSuccess();
+    }
+
+    @Override
+    public String toString() {
+        return "ValidateNode{" +
+                "id=" + getId() +
+                " props=" + props +
+                '}';
     }
 }

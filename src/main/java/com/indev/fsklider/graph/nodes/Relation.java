@@ -27,7 +27,6 @@ public class Relation {
         return "Relation{" +
                 "id='" + id + '\'' +
                 ", match=" + match +
-                ", repeatMax=" +
                 '}';
     }
 }

@@ -2,7 +2,6 @@ package com.indev.fsklider.graph.nodes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.indev.fsklider.graph.nodes.properties.ExtractProps;
-import com.indev.fsklider.utils.Utils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ExtractNode extends Node {
+
     @JsonProperty("props")
     private ExtractProps props;
 
@@ -40,7 +40,7 @@ public class ExtractNode extends Node {
                         strings.add(name);
                         strings.sort(Comparator.comparingInt(s -> Math.abs(s.length() - "intelligent".length())));
                         getContext().getContextMap().put(props.getVarName(), strings.get(0));
-                        System.out.println("+++++++++++ CONTEXT FROM EXTRACT ++++++++++ " + getContext().getContextMap());
+                        System.out.println("+++++++++++ CONTEXT FROM ExtractNode ++++++++++ " + getContext().getContextMap());
                         getContext().setName(strings.get(0));
 //                        contextMap.put();
 //                        getContext().setContextMap(contextMap);
@@ -49,7 +49,7 @@ public class ExtractNode extends Node {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (props.getMatch() != null){
+        } else if (props.getMatch() != null) {
             for (String match : props.getMatch()) {
                 if (asrResult.contains(match)) {
                     getContext().getContextMap().put(props.getVarName(), match);
@@ -73,7 +73,9 @@ public class ExtractNode extends Node {
     @Override
     public String toString() {
         return "ExtractNode{" +
-                "props=" + props +
+                "id= " + getId() +
+                " EdgeList= " + getEdgeList() +
+                " props=" + props +
                 '}';
     }
 }

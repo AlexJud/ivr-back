@@ -1,20 +1,22 @@
 package com.indev.fsklider.graph.nodes;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.indev.fsklider.graph.nodes.properties.ActionProps;
 import com.indev.fsklider.graph.results.Command;
-import org.springframework.stereotype.Component;
+import com.indev.fsklider.utils.Utils;
 
-import java.util.List;
 import java.util.Stack;
 
-@Component
 public class ActionNode extends Node {
-    private List<String> props;
 
-    public List<String> getProps() {
+    @JsonProperty("props")
+    private ActionProps props;
+
+    public ActionProps getProps() {
         return props;
     }
 
-    public void setProps(List<String> props) {
+    public void setProps(ActionProps props) {
         this.props = props;
     }
 
@@ -37,14 +39,14 @@ public class ActionNode extends Node {
         Command command = new Command();
         if (getRepeat() == 0) {
             command.setApp("SynthAndRecog");
-            String text = replaceVar(props.get(0));
-            command.setOption(text + ", " +  props.get(1));
-            getContext().getEvent().setSystemText(text);
+            String text = replaceVar(props.getSynthText());
+            command.setOption(text + ", " +  props.getGrammar() + ", " + props.getOptions());
+            getContext().getEvent().setSystemText(Utils.removeBackslash(text));
             commandList.push(command);
         } else {
             command.setApp("SynthAndRecog");
-//            command.setOption("Пожалуйста\\, повторите," + "http://localhost/theme:graph,b=1&t=5000&nit=5000");
-            command.setOption("Пожалуйста\\, повторите," + "l=ru-RU&p=uni2");
+            command.setOption("Пожалуйста\\, повторите," + "http://localhost/theme:graph,b=1&t=5000&nit=5000");
+//            command.setOption("Пожалуйста\\, повторите," + "l=ru-RU&p=uni2");
             getContext().getEvent().setSystemText("Пожалуйста, повторите");
             commandList.push(command);
             setRepeat(0);
@@ -54,6 +56,11 @@ public class ActionNode extends Node {
         getContext().setCommands(commandList);
         setRepeat(getRepeat() + 1);
         return calculateNext();
+    }
+
+    public String getMessage() {
+
+        return getContext().getEvent().getSystemText();
     }
 
     @Override

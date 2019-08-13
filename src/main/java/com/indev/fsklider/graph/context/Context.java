@@ -22,6 +22,7 @@ public class Context {
     private ResponseEvent event = new ResponseEvent();
     private boolean notRepeat = false;
     private boolean isEnd;
+    private String callerId;
 
     public ResponseEvent getEvent() {
         return event;
@@ -106,5 +107,13 @@ public class Context {
 
     public void setNotRepeat(boolean notRepeat) {
         this.notRepeat = notRepeat;
+    }
+
+    public String getCallerId() {
+        return callerId;
+    }
+
+    public void setCallerId(String callerId) {
+        this.callerId = callerId;
     }
 }

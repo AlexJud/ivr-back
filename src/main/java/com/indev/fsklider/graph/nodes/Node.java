@@ -2,7 +2,9 @@ package com.indev.fsklider.graph.nodes;
 
 import com.indev.fsklider.graph.context.Context;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class Node{
@@ -46,20 +48,60 @@ public abstract class Node{
 
     public abstract String run();
 
-    String replaceVar(String text) {
-        Pattern pattern = Pattern.compile("@person#");
-        String var = null;
-        try {
-            var = text.substring(text.indexOf('@') + 1, text.indexOf('#'));
-        } catch (Exception e) {
-            //swallow
-        }
+    public static void main(String[] args) {
+        String text = "Тебя зовут @name#\\, ты хочешь @howmuch# @kind# любви?";
+        Pattern pattern = Pattern.compile("@" + "[a-zA-Z]+" + "#");
+        Matcher matcher = pattern.matcher(text);
+        String key = null;
+        HashMap<String, String> keys = new HashMap<>();
+        keys.put("name", "Максим");
+        keys.put("kind", "большой");
+        keys.put("howmuch", "много");
         String result;
-        if (getContext().getContextMap().containsKey(var)) {
-            result = text.replaceAll(pattern.toString(), getContext().getContextMap().get(var));
-        } else
-            result = text.replaceAll(pattern.toString(), "");
-        return result;
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            key = matcher.group(0).substring(matcher.group(0).indexOf('@') + 1, matcher.group(0).indexOf('#'));
+            matcher.appendReplacement(sb, keys.getOrDefault(key, ""));
+        }
+
+        System.out.println(sb.toString());
     }
+
+    String replaceVar(String text) {
+        String temp = text.replace("\\", "");
+        System.out.println(temp);
+        Pattern pattern = Pattern.compile("@" + "[a-zA-Z]+" + "#");
+        Matcher matcher = pattern.matcher(temp);
+        String key;
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            key = matcher.group(0).substring(matcher.group(0).indexOf('@') + 1, matcher.group(0).indexOf('#'));
+            System.out.println("Looking for key: " + key);
+            if (getContext().getContextMap().containsKey(key)) {
+                System.out.println("Key contains! This key is: " + key);
+                matcher.appendReplacement(sb, getContext().getContextMap().get(key));
+            } else {
+                matcher.appendReplacement(sb, "");
+            }
+        }
+        System.out.println("Строка: " + sb.toString());
+        matcher.appendTail(sb);
+        return sb.toString().replace(",", "\\,");
+    }
+//    String replaceVar(String text) {
+//        Pattern pattern = Pattern.compile("@" + "[a-zA-Z]+" + "#");
+//        Matcher matcher = pattern.matcher(text);
+//        String key;
+//        String result = null;
+//        while (matcher.find()) {
+//            key = matcher.group(0).substring(matcher.group(0).indexOf('@') + 1, matcher.group(0).indexOf('#'));
+//            if (getContext().getContextMap().containsKey(key)) {
+//                result = text.replaceAll(pattern.toString(), getContext().getContextMap().get(key));
+//            } else
+//                result = text.replaceAll(pattern.toString(), "");
+//        }
+//        System.out.println(result);
+//        return result;
+//    }
 
 }

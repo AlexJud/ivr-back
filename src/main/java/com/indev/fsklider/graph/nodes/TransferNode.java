@@ -1,19 +1,21 @@
 package com.indev.fsklider.graph.nodes;
 
+import com.indev.fsklider.graph.nodes.properties.EndProps;
 import com.indev.fsklider.graph.results.Command;
 import com.indev.fsklider.utils.Utils;
 
-import java.util.List;
 import java.util.Stack;
 
 public class TransferNode extends Node{
-    private List<String> props;
 
-    public List<String> getProps() {
+
+//    private List<String> props;
+    private EndProps props;
+    public EndProps getProps() {
         return props;
     }
 
-    public void setProps(List<String> props) {
+    public void setProps(EndProps props) {
         this.props = props;
     }
 
@@ -30,9 +32,9 @@ public class TransferNode extends Node{
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();
         command.setApp("MRCPSynth");
-        String text = replaceVar(props.get(0));
+        String text = replaceVar(props.getSynthText());
         command.setOption(text);
-        getContext().getEvent().setSystemText(text);
+        getContext().getEvent().setSystemText(Utils.removeBackslash(text));
         commandList.push(command);
         command = new Command();
         command.setApp("Hangup");
@@ -41,4 +43,11 @@ public class TransferNode extends Node{
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "TransferNode{" +
+                "id=" + getId() +
+                " props=" + props +
+                '}';
+    }
 }

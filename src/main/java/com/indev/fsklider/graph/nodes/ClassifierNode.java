@@ -1,17 +1,14 @@
 package com.indev.fsklider.graph.nodes;
 
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 
-@Component
 public class ClassifierNode extends Node {
 
     @Override
     public String run() {
         HashMap<String, String> contextMap = getContext().getContextMap();
         String asrResult = getContext().getRecogResult();
-        System.out.println(asrResult);
+//        System.out.println(asrResult);
         String nextNodeId = null;
         for (Relation relation : getEdgeList()) {
             if (relation.getMatch() == null) {
@@ -27,5 +24,12 @@ public class ClassifierNode extends Node {
             }
         }
         return nextNodeId;
+    }
+    @Override
+    public String toString() {
+        return "ClassifierNode{" +
+                "id=" + getId() +
+                " edgeList=" + getEdgeList() +
+                '}';
     }
 }

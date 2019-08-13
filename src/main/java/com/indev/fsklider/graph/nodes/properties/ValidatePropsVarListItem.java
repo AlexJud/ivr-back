@@ -28,4 +28,13 @@ public class ValidatePropsVarListItem {
     public void setEdgeIfEmpty(String edgeIfEmpty) {
         this.edgeIfEmpty = edgeIfEmpty;
     }
+
+    @Override
+    public String toString() {
+        return "ValidatePropsVarListItem{" +
+                "varName='" + varName + '\'' +
+                ", rawVarName='" + rawVarName + '\'' +
+                ", edgeIfEmpty='" + edgeIfEmpty + '\'' +
+                '}';
+    }
 }

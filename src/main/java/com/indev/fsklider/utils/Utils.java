@@ -1,5 +1,6 @@
 package com.indev.fsklider.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -31,6 +32,17 @@ public class Utils {
         }
         return result;
     }
+
+    @NotNull
+    public static String removeBackslash(String text) {
+        StringBuilder sb = new StringBuilder(text);
+        int index = -1;
+        while ((index = sb.indexOf("\\")) != -1) {
+            sb.deleteCharAt(index);
+        }
+        return sb.toString();
+    }
+
     public static String getProperties(String name) {
         Properties props = null;
         String result = null;
