@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping
@@ -23,7 +24,7 @@ public class Grammar {
     @PostMapping("/api/grammar")
     public ResponseEntity<ResponseMessage> getGrammar(@RequestParam("uploadFile") MultipartFile grammarFile, @RequestParam("fileName") String name) {
         try {
-            Path grammarPath = Path.of(System.getProperty("user.dir") + "/src/main/resources/grammars/" + name);
+            Path grammarPath = Paths.get(System.getProperty("user.dir") + "/src/main/resources/grammars/" + name);
             Files.write(grammarPath, grammarFile.getBytes());
             ftpHelper.sendFile(name, new FileInputStream(System.getProperty("user.dir") + "/src/main/resources/grammars/" + name));
         } catch (IOException e) {

@@ -29,7 +29,7 @@ public class Model {
     public ResponseEntity<String> getModel() {
         String str = null;
         try {
-            str = Files.readString(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph.json"));
+            str = Arrays.toString(Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph.json")));
         } catch (IOException e) {
             e.printStackTrace();
         }
