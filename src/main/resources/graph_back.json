@@ -1,0 +1,266 @@
+[
+  {
+    "id": "root",
+    "type": "ActionNode",
+    "props": ["Единый call-центр\\, меня зовут Алёна\\, чем могу помочь?", "/etc/asterisk/grammar.xml,b=1&t=5000&nit=5000"],
+    "edgeList":[{
+      "id": "classify"
+    }]
+  },
+  {
+    "id": "classify",
+    "type": "ClassifierNode",
+    "edgeList": [
+      {
+        "id": "buy_ext_estate",
+        "match": [
+          "купить",
+          "продажу",
+          "продаж",
+          "приобрести",
+          "продаёте",
+          "покупки",
+          "приобретения"
+        ]
+      },
+      {
+        "id": "support_ext_name",
+        "match": [
+          "сдача",
+          "ключи",
+          "выдача",
+          "ключей",
+          "сдаче",
+          "выдаче",
+          "ключ"
+        ]
+      },
+      {
+        "id": "EndNode_ask_number",
+        "match": [
+          "переведите",
+          "перевести",
+          "соедини",
+          "соединить",
+          "соедините"
+        ]
+      },
+      {
+        "id": "ask_buy",
+        "match": [
+          "балашиха", "балашихе", "мытищи", "мытищах", "дыхание", "дыхании", "новогиреевский", "новогиреевском", "сколсковский", "сколсковском", "одинцово",
+          "одинцовский", "римский", "римском", "развилка", "развилке", "домодедовская", "домодедовском", "ромодедовский", "тимирязевская", "тимирязевском", "датский",
+          "датском", "бибирево", "раменском", "раменский", "фабричная", "фабричном", "скандинавский", "скандинавском", "медведково", "медведковский"
+        ]
+      },
+      {
+        "id": "unknown"
+      }
+    ]
+  },
+  {
+    "id": "buy_ext_estate",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "estate",
+      "rawVarName": "rawEstate",
+      "match": ["балашиха", "балашихе", "мытищи", "мытищах", "дыхание", "дыхании", "новогиреевский", "новогиреевском", "сколсковский", "сколсковском", "одинцово",
+        "одинцовский", "римский", "римском", "развилка", "развилке", "домодедовская", "домодедовском", "ромодедовский", "тимирязевская", "тимирязевском", "датский",
+        "датском", "бибирево", "раменском", "раменский", "фабричная", "фабричном", "скандинавский", "скандинавском", "медведково", "медведковский"]
+    },
+    "edgeList": [
+      {
+        "id": "buy_ValidateNode"
+      }
+    ]
+  },
+  {
+    "id": "buy_ext_name",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "person",
+      "rawVarName": "rawPerson",
+      "matchFile": "russian_name.txt"
+    },
+    "edgeList": [
+      {
+        "id": "buy_ValidateNode"
+      }
+    ]
+  },
+  {
+    "id": "buy_ext_source",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "source",
+      "rawVarName": "rawSource"
+    },
+    "edgeList": [
+      {
+        "id": "buy_ValidateNode"
+      }
+    ]
+  },
+  {
+    "id": "buy_ValidateNode",
+    "type": "ValidateNode",
+    "props": {
+      "varList": [
+        {
+          "varName": "person",
+          "rawVarName": "rawPerson",
+          "edgeIfEmpty": "buy_ask_name"
+        },
+        {
+          "varName": "estate",
+          "rawVarName": "rawEstate",
+          "edgeIfEmpty": "buy_ask_estate"
+        },
+        {
+          "varName": "source",
+          "rawVarName": "rawSource",
+          "edgeIfEmpty": "buy_ask_source"
+        }
+      ],
+      "edgeIfSuccess": "send"
+    }
+  },
+  {
+    "id": "buy_ask_name",
+    "type": "ActionNode",
+    "props": ["Отличное решение! Подскажите\\, как я могу к вам обращаться?", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
+    "edgeList": [
+      {
+        "id": "buy_ext_name"
+      }
+    ]
+  },
+  {
+    "id": "buy_ask_estate",
+    "type": "ActionNode",
+    "props": ["@person# какой жилой комплекс вас интересует?", "/etc/asterisk/grammar.xml,b=1&t=5000&nit=5000"],
+    "edgeList": [
+      {
+        "id": "buy_ext_estate"
+      }
+    ]
+  },
+  {
+    "id": "buy_ask_source",
+    "type": "ActionNode",
+    "props": ["@person# уточните источник рекламы\\, откуда вы о нас узнали", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
+    "edgeList": [
+      {
+        "id": "buy_ext_source"
+      }
+    ]
+  },
+  {
+    "id": "send",
+    "type": "SEND",
+    "props": {
+      "dest": "http://localhost:8080/message",
+      "varList": [""]
+    },
+    "edgeList": [
+      {
+        "id": "EndNode"
+      }
+    ]
+  },
+  {
+    "id": "support_ext_name",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "person",
+      "rawVarName": "rawPerson",
+      "matchFile": "russian_name.txt"
+    },
+    "edgeList": [
+      {
+        "id": "support_ValidateNode"
+      }
+    ]
+  },
+  {
+    "id": "support_ValidateNode",
+    "type": "ValidateNode",
+    "props": {
+      "varList": [
+        {
+          "varName": "person",
+          "rawVarName": "rawPerson",
+          "edgeIfEmpty": "support_ask_person"
+        }
+      ],
+      "edgeIfSuccess": "support_EndNode"
+    }
+  },
+  {
+    "id": "support_ask_person",
+    "type": "ActionNode",
+    "props": ["Как я могу к вам обращаться\\, представьтесь пожалуйста?", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
+    "edgeList": [
+      {
+        "id": "support_ext_name"
+      }
+    ]
+  },
+  {
+    "id": "EndNode_ext_number",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "number",
+      "rawVarName": "rawNumber"
+    },
+    "edgeList": [
+      {
+        "id": "EndNode_ValidateNode"
+      }
+    ]
+  },
+  {
+    "id": "EndNode_ValidateNode",
+    "type": "ValidateNode",
+    "props": {
+      "varList": [
+        {
+          "varName": "number",
+          "rawVarName": "rawNumber",
+          "edgeIfEmpty": "EndNode_ask_number"
+        }
+      ],
+      "edgeIfSuccess": "EndNode_number"
+    }
+  },
+  {
+    "id": "EndNode_ask_number",
+    "type": "ActionNode",
+    "props": ["Назовите внутренний номер сотрудника", "http://localhost/theme:graph,b=1&t=5000&nit=5000"],
+    "edgeList": [
+      {
+        "id": "EndNode_ext_number"
+      }
+    ]
+  },
+  {
+    "id": "EndNode",
+    "type": "EndNode",
+    "props": ["@person# перевожу Ваш звонок на менеджера\\, оставайтесь на линии"]
+  },
+  {
+    "id": "unknown",
+    "type": "EndNode",
+    "props": ["Я соединю вас с оператором оставайтесь на линии"]
+  },
+  {
+    "id": "support_EndNode",
+    "type": "EndNode",
+    "props":["@person# перевожу Ваш звонок в отдел сопровождения\\, оставайтесь на линии"]
+  },
+  {
+    "id": "EndNode_number",
+    "type": "EndNode",
+    "props": ["Перевожу Ваш звонок\\, оставайтесь на линии"]
+  }
+]
