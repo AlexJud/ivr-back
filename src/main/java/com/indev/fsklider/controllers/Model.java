@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -27,9 +28,11 @@ public class Model {
     @CrossOrigin
     @GetMapping(value = "/api/model", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<String> getModel() {
+
         String str = null;
         try {
-            str = Arrays.toString(Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph.json")));
+            byte[] array = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph.json"));
+            str = new String(array, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
