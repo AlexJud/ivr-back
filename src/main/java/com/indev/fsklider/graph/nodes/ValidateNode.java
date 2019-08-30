@@ -3,31 +3,36 @@ package com.indev.fsklider.graph.nodes;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.indev.fsklider.graph.nodes.properties.ValidateProps;
 import com.indev.fsklider.graph.nodes.properties.ValidatePropsVarListItem;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 
+@Getter @Setter
 public class ValidateNode extends Node {
     @JsonProperty("props")
     private ValidateProps props;
-
-    public ValidateProps getProps() {
-        return props;
-    }
-
-    public void setProps(ValidateProps props) {
-        this.props = props;
-    }
 
     @Override
     public String run() {
         for (ValidatePropsVarListItem item : props.getVarList()) {
             HashMap<String, String> context = getContext().getContextMap();
-            if (!(context.containsKey(item.getVarName())) && !(context.containsKey(item.getRawVarName())) ) {
-                return item.getEdgeIfEmpty();
+            //Если число повторов достигло максимума, создадим переменную
+            //и запишем туда пустоту чтобы Валидатор больше к ней не обращался.
+            if (item.getRepeatCount().equals(item.getRepeatMax())) {
+                insert(item.getVarName(), "");
+                item.setRepeatCount(0);
+            } else if ( context.get(item.getVarName()) == null ) {
+                return calculateNext(item);
             }
         }
-        System.out.println(getContext().getContextMap());
         return props.getEdgeIfSuccess();
+    }
+
+    private String calculateNext(ValidatePropsVarListItem item) {
+        String nextId = item.getEdgeIfEmpty().get(item.getRepeatCount()).getId();
+        item.incrementRepeatCount();
+        return nextId;
     }
 
     @Override

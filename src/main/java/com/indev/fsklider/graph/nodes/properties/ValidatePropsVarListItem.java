@@ -1,32 +1,20 @@
 package com.indev.fsklider.graph.nodes.properties;
 
+import com.indev.fsklider.graph.nodes.Relation;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.ArrayList;
+
+@Getter @Setter
 public class ValidatePropsVarListItem {
     private String varName;
     private String rawVarName;
-    private String edgeIfEmpty;
+    private Integer repeatCount = 0;
+    private Integer repeatMax;
+    private ArrayList<Relation> edgeIfEmpty;
 
-    public String getVarName() {
-        return varName;
-    }
-
-    public void setVarName(String varName) {
-        this.varName = varName;
-    }
-
-    public String getRawVarName() {
-        return rawVarName;
-    }
-
-    public void setRawVarName(String rawVarName) {
-        this.rawVarName = rawVarName;
-    }
-
-    public String getEdgeIfEmpty() {
-        return edgeIfEmpty;
-    }
-
-    public void setEdgeIfEmpty(String edgeIfEmpty) {
-        this.edgeIfEmpty = edgeIfEmpty;
+    public void incrementRepeatCount() {
+        repeatCount++;
     }
 
     @Override

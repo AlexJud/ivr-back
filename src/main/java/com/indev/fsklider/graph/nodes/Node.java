@@ -1,52 +1,25 @@
 package com.indev.fsklider.graph.nodes;
 
 import com.indev.fsklider.graph.context.Context;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+@Getter @Setter
 public abstract class Node{
     private String id;
     private List<Relation> edgeList;
-    private Integer repeat = 0;
+    private Integer repeatCount = 0;
     private Context context;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public List<Relation> getEdgeList()
-    {
-        return edgeList;
-    }
-
-    public void setEdgeList(List<Relation> edgeList) {
-        this.edgeList = edgeList;
-    }
-
-    public Context getContext() {
-        return context;
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    public Integer getRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(Integer repeat) {
-        this.repeat = repeat;
-    }
-
     public abstract String run();
+
+    public void insert(String varName, String value) {
+        getContext().getContextMap().put(varName, value);
+    }
 
     public static void main(String[] args) {
         String text = "Тебя зовут @name#\\, ты хочешь @howmuch# @kind# любви?";
@@ -69,7 +42,7 @@ public abstract class Node{
 
     String replaceVar(String text) {
         String temp = text.replace("\\", "");
-        System.out.println(temp);
+//        System.out.println(temp);
         Pattern pattern = Pattern.compile("@" + "[a-zA-Z]+" + "#");
         Matcher matcher = pattern.matcher(temp);
         String key;

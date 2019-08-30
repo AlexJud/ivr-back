@@ -19,6 +19,6 @@ public class HttpHelper {
     public void doPost (ResponseEvent event){
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<ResponseEvent> request = new HttpEntity<>(event);
-        ResponseEvent dialogResult = restTemplate.postForObject("https://localhost:8080/event", request, ResponseEvent.class);
+        ResponseEvent dialogResult = restTemplate.postForObject("http://192.168.1.74:8080/event", request, ResponseEvent.class);
     }
 }

@@ -1,18 +1,21 @@
 package com.indev.fsklider.graph.nodes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.indev.fsklider.agiscripts.Incoming;
 import com.indev.fsklider.graph.nodes.properties.ExtractProps;
+import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.nio.file.Files;
+import java.util.*;
 
 public class ExtractNode extends Node {
 
     @JsonProperty("props")
     private ExtractProps props;
+    private static final Logger log = Logger.getLogger(Incoming.class);
 
     public ExtractProps getProps() {
         return props;
@@ -24,50 +27,56 @@ public class ExtractNode extends Node {
 
     @Override
     public String run() {
-        String asrResult = getContext().getRecogResult();
-        // Проверяем на повтор
-        if (getContext().getNotRepeat()) {
-            getRawRecognize(asrResult);
-            return getEdgeList().get(0).getId();
-        }
+        @NotNull String asrResult = getContext().getRecogResult();
+//        getContext().getContextMap().put(props.getRawVarName(), asrResult);
+
+        //Проверяем есть ли файл с ключами
         if (props.getMatchFile() != null) {
-            try {
-                BufferedReader in = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/src/main/resources" + "/russian_names.csv"));
-                ArrayList<String> strings = new ArrayList<>();
-                while (in.ready()) {
-                    String name = in.readLine();
-                    if (asrResult.contains(name)) {
-                        strings.add(name);
-                        strings.sort(Comparator.comparingInt(s -> Math.abs(s.length() - "intelligent".length())));
-                        getContext().getContextMap().put(props.getVarName(), strings.get(0));
-                        System.out.println("+++++++++++ CONTEXT FROM ExtractNode ++++++++++ " + getContext().getContextMap());
-                        getContext().setName(strings.get(0));
-//                        contextMap.put();
-//                        getContext().setContextMap(contextMap);
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            log.info("Выбрано сопоставление с файлом ключей");
+            validateFromFile(props.getMatchFile(), asrResult);
+        //Проверяем есть ли список ключей
         } else if (props.getMatch() != null) {
-            for (String match : props.getMatch()) {
-                if (asrResult.contains(match)) {
-                    getContext().getContextMap().put(props.getVarName(), match);
-//                    contextMap.put();
-//                    getContext().setContextMap(contextMap);
-                }
-            }
+            log.info("Выбрано сопоставление по масиву ключей");
+            validateFromList(asrResult);
+        //Если ничего нет и сравнивать не с чем, записываем ответ как есть
         } else {
+            log.info("Выбрана запись ответа без сравнения");
             getRawRecognize(asrResult);
         }
+        log.info("Контекст: " + Collections.singletonList(getContext().getContextMap()));
         return getEdgeList().get(0).getId();
     }
 
-    public void getRawRecognize(String asrResult) {
-//        String message = Utils.getMessage(asrResult);
-        String message = asrResult;
-        getContext().getContextMap().put(props.getRawVarName(), message);
-        getContext().setNotRepeat(false);
+    private void validateFromFile(String fileName, String asrResult) {
+        try {
+            File keyFile = new File(System.getProperty("user.dir") + "/src/main/resources/" + fileName);
+            List<String> keys = Files.readAllLines(keyFile.toPath());
+            ArrayList<String> strings = new ArrayList<>();
+            for (String key : keys) {
+                if (asrResult.contains(key)) {
+                    strings.add(key);
+                    strings.sort(Comparator.comparingInt(s -> Math.abs(s.length() - "intelligent".length())));
+                    insert(props.getVarName(), strings.get(0));
+                }
+            }
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void validateFromList(String asrResult) {
+        for (String key : props.getMatch()) {
+            if (asrResult.contains(key)) {
+                insert(props.getVarName(), key);
+            }
+        }
+    }
+    //Если VN вернул <nomatch/>, то не записываем это в переменную.
+    private void getRawRecognize(@NotNull String asrResult) {
+        if(!asrResult.equals("<nomatch/>")) {
+            getContext().getContextMap().put(props.getVarName(), asrResult);
+        }
     }
 
     @Override

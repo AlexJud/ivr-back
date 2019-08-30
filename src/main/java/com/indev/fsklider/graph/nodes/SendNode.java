@@ -29,7 +29,6 @@ public class SendNode extends Node {
 
     @Override
     public String run() {
-        System.out.println(getContext().getContextMap());
         HttpHelper http = new HttpHelper();
 //        http.doPost(props.getDest(), getContext());
         return calculateNext();

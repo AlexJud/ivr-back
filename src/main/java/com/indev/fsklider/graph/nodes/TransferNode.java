@@ -4,13 +4,13 @@ import com.indev.fsklider.graph.nodes.properties.EndProps;
 import com.indev.fsklider.graph.results.Command;
 import com.indev.fsklider.utils.Utils;
 
+import java.util.Map;
 import java.util.Stack;
 
 public class TransferNode extends Node{
-
-
 //    private List<String> props;
     private EndProps props;
+
     public EndProps getProps() {
         return props;
     }

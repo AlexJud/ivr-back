@@ -1,5 +1,7 @@
 package com.indev.fsklider.graph.nodes;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 
 public class ClassifierNode extends Node {
@@ -7,6 +9,7 @@ public class ClassifierNode extends Node {
     @Override
     public String run() {
         HashMap<String, String> contextMap = getContext().getContextMap();
+        @NotNull
         String asrResult = getContext().getRecogResult();
 //        System.out.println(asrResult);
         String nextNodeId = null;

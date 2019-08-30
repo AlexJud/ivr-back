@@ -1,0 +1,215 @@
+[
+  {
+    "type": "ActionNode",
+    "id": "root",
+    "props": {
+      "synthText": "Здравствуйте, меня зовут Елена! Вы начинаете оформление заказа. Скажите, пожалуйста, как я могу к Вам обращаться?",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "ext_name"
+      }
+    ]
+  },
+  {
+    "id": "ext_name",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "person",
+      "rawVarName": "rawPerson",
+      "matchFile": "russian_name.txt"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "id": "validator",
+    "type": "ValidateNode",
+    "props": {
+      "varList": [
+        {
+          "varName": "name",
+          "rawVarName": "rawName",
+          "edgeIfEmpty": "root"
+        },
+        {
+          "varName": "city",
+          "rawVarName": "rawCity",
+          "edgeIfEmpty": "ask_city"
+        },
+        {
+          "varName": "address",
+          "rawVarName": "rawAddress",
+          "edgeIfEmpty": "ask_address"
+        },
+        {
+          "varName": "time",
+          "rawVarName": "rawAddress",
+          "edgeIfEmpty": "ask_time"
+        }
+      ],
+      "edgeIfSuccess": "end"
+    }
+  },
+  {
+    "type": "ActionNode",
+    "id": "ask_city",
+    "props": {
+      "synthText": "@name#, доставка в какой город Вас интересует?",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "ext_city"
+      }
+    ]
+  },
+  {
+    "id": "ext_city",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "city",
+      "rawVarName": "rawCity"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "type": "ActionNode",
+    "id": "ask_address",
+    "props": {
+      "synthText": "@name# назовите, пожалуйста, адрес доставки",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "ext_address"
+      }
+    ]
+  },
+  {
+    "id": "ext_address",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "city",
+      "rawVarName": "rawCity"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "type": "ActionNode",
+    "id": "ask_time",
+    "props": {
+      "synthText": "@name#, укажите, пожалуйста, удобное для Вас время доставки",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "ext_time"
+      }
+    ]
+  },
+  {
+    "id": "ext_time",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "time",
+      "rawVarName": "rawTime"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "type": "ActionNode",
+    "id": "ask_phone",
+    "props": {
+      "synthText": "Сохранить телефон с которого Вы звоните как контактный",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "classify"
+      }
+    ]
+  },
+  {
+    "id": "classify",
+    "type": "ClassifierNode",
+    "edgeList": [
+      {
+        "id": "validator",
+        "match": [
+          "да",
+          "сохранить",
+          "Да",
+          "текущий"
+        ]
+      },
+      {
+        "id": "new_phone",
+        "match": [
+          "нет",
+          "новый",
+          "другой",
+          "Нет"
+        ]
+      },
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "id": "ext_phone",
+    "type": "ExtractNode",
+    "props": {
+      "varName": "phone",
+      "rawVarName": "rawPhone"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "id": "end",
+    "type": "EndNode",
+    "props": {
+      "synthText": "@name#, Ваш заказ сохранён. Давайте проверим, что получилось. Вас зовут @name#, Ваш город @city#, Ваш адрес @address#, время доставки @time#, телефон для связи @phone#"
+    }
+  },
+  {
+    "type": "ActionNode",
+    "id": "new_phone",
+    "props": {
+      "synthText": "@name#, назовите Ваш телефон по одной цифре без кода плюс семь",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "ext_phone"
+      }
+    ]
+  }
+]

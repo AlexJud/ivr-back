@@ -10,9 +10,11 @@ import com.indev.fsklider.graph.nodes.properties.ValidateProps;
 import com.indev.fsklider.graph.nodes.properties.ValidatePropsVarListItem;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class GraphBuilder {
     private String filename;
@@ -40,9 +42,9 @@ public class GraphBuilder {
             if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ActionNode) {
                 ActionNode objectNode = mapper.treeToValue(node, ActionNode.class);
                 graph.put(objectNode.getId(), objectNode);
-//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ANALYSIS) {
-//                AnalysisNode objectNode = mapper.treeToValue(node, AnalysisNode.class);
-//                graph.put(objectNode.getId(), objectNode);
+            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SystemNode) {
+                SystemNode objectNode = mapper.treeToValue(node, SystemNode.class);
+                graph.put(objectNode.getId(), objectNode);
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ClassifierNode) {
                 ClassifierNode objectNode = mapper.treeToValue(node, ClassifierNode.class);
                 graph.put(objectNode.getId(), objectNode);
@@ -69,9 +71,9 @@ public class GraphBuilder {
                 }
             }
         }
-        for (Map.Entry entry : graph.entrySet()) {
-            System.out.println(entry.getValue());
-        }
+//        for (Map.Entry entry : graph.entrySet()) {
+//            System.out.println(entry.getValue());
+//        }
         return graph;
     }
 
@@ -96,8 +98,11 @@ public class GraphBuilder {
             currentVarName = props.get("varName").textValue();
             varListItem.setVarName(currentVarName);
             varListItem.setRawVarName("raw_" + currentVarName);
-            varListItem.setEdgeIfEmpty(specifierId + "_action_" + props.get("varName").textValue());
-            System.out.println(varListItem.getEdgeIfEmpty());
+            Relation relation = new Relation();
+            relation.setId(specifierId + "_action_" + props.get("varName").textValue());
+            ArrayList<Relation> relations = new ArrayList<>();
+            relations.add(relation);
+            varListItem.setEdgeIfEmpty( relations);
 
             varListItems.add(varListItem);
 
@@ -107,6 +112,7 @@ public class GraphBuilder {
             actionProps.setGrammar(props.get("grammar").textValue());
             actionProps.setOptions(props.get("asrOptions").textValue());
             actionNode.setProps(actionProps);
+
             Relation actionEdge = new Relation();
             actionEdge.setId(specifierId + "_extract_" + currentVarName);
             ArrayList<Relation> edgeList = new ArrayList<>();

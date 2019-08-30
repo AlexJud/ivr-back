@@ -1,26 +1,14 @@
 package com.indev.fsklider.graph.nodes.properties;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 
+@Getter @Setter
 public class ValidateProps {
     private ArrayList<ValidatePropsVarListItem> varList;
     private String edgeIfSuccess;
-
-    public ArrayList<ValidatePropsVarListItem> getVarList() {
-        return varList;
-    }
-
-    public void setVarList(ArrayList<ValidatePropsVarListItem> varList) {
-        this.varList = varList;
-    }
-
-    public String getEdgeIfSuccess() {
-        return edgeIfSuccess;
-    }
-
-    public void setEdgeIfSuccess(String edgeIfSuccess) {
-        this.edgeIfSuccess = edgeIfSuccess;
-    }
 
     @Override
     public String toString() {
