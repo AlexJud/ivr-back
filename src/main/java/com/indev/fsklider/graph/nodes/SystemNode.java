@@ -17,4 +17,12 @@ public class SystemNode extends Node {
         getContext().getContextMap().put(props.getVarName(), sysVar);
         return edgeList.get(0).getId();
     }
+
+    @Override
+    public String toString() {
+        return "SystemNode{" +
+                "props=" + props +
+                ", edgeList=" + edgeList +
+                '}';
+    }
 }

@@ -38,7 +38,7 @@ public class Incoming extends BaseAgiScript {
             context.getContextMap().put("callerId", callerId);
             context.setCallerId(callerId);
             log.info("Поступил звонок с номера " + callerId);
-            sendCallStart(callerId);
+//            sendCallStart(callerId);
 //            socket.sendSystemMessage("Звонок начался");
             Node currentNode;
             GraphBuilder builder = new GraphBuilder(System.getProperty("user.dir"));
@@ -55,14 +55,14 @@ public class Incoming extends BaseAgiScript {
                 nextId = currentNode.run();
                 log.info("Node: " + currentNode.getId() + " - завершил выполнение");
                 context = currentNode.getContext();
-                if (currentNode instanceof ActionNode) {
-                    sendSystemSay(callerId, currentNode.getId());
-                }
-                if (currentNode instanceof ExtractNode) {
-                    sendAbonentSay(callerId);
-                } else if (currentNode instanceof TransferNode) {
-                    sendCallEnd(callerId);
-                }
+//                if (currentNode instanceof ActionNode) {
+//                    sendSystemSay(callerId, currentNode.getId());
+//                }
+//                if (currentNode instanceof ExtractNode) {
+//                    sendAbonentSay(callerId);
+//                } else if (currentNode instanceof TransferNode) {
+//                    sendCallEnd(callerId);
+//                }
 
                 sendMessage(currentNode, callerId);
                 if (!context.getCommands().empty()) {

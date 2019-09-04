@@ -7,7 +7,6 @@ import com.indev.fsklider.graph.nodes.*;
 import com.indev.fsklider.graph.nodes.properties.ActionProps;
 import com.indev.fsklider.graph.nodes.properties.ExtractProps;
 import com.indev.fsklider.graph.nodes.properties.ValidateProps;
-import com.indev.fsklider.graph.nodes.properties.ValidatePropsVarListItem;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,84 +59,115 @@ public class GraphBuilder {
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.EndNode) {
                 TransferNode objectNode = mapper.treeToValue(node, TransferNode.class);
                 graph.put(objectNode.getId(), objectNode);
-//                ArrayList<String> temp = (ArrayList<String>) objectNode.getProps();
-//                temp.set(0, temp.get(0).replace(",", "\\,"));
-//                objectNode.setProps(temp);
-//                System.out.println(objectNode.getProps());
-//                graph.put(objectNode.getId(), objectNode);
             } else if(NodeType.valueOf(node.get("type").textValue()) == NodeType.SpecifierNode) {
-                for (Node newNode : spreadNode(node)) {
+                for (Node newNode : splitSpecifierNode(node)) {
+                    graph.put(newNode.getId(), newNode);
+                }
+            } else if(NodeType.valueOf(node.get("type").textValue()) == NodeType.BranchNode) {
+                for (Node newNode : splitBranchNode(node)) {
                     graph.put(newNode.getId(), newNode);
                 }
             }
         }
-//        for (Map.Entry entry : graph.entrySet()) {
-//            System.out.println(entry.getValue());
-//        }
+        for (Map.Entry entry : graph.entrySet()) {
+            System.out.println(entry.getValue());
+        }
         return graph;
     }
 
-    private ArrayList<Node> spreadNode(JsonNode node) {
+    private ArrayList<Node> splitBranchNode(JsonNode node) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ActionNode actionNode = new ActionNode();
+        ClassifierNode classifierNode = new ClassifierNode();
+        Relation relation = new Relation();
+        ArrayList<Node> nodeList = new ArrayList<>();
+        nodeList.add(actionNode);
+        nodeList.add(classifierNode);
+
+        actionNode.setId(node.get("id").textValue());
+
+        ActionProps actionProps = new ActionProps();
+        JsonNode props = node.get("props");
+        actionProps.setSynthText(props.get("synthText").textValue());
+        actionProps.setGrammar(props.get("grammar").textValue());
+        actionProps.setOptions(props.get("asrOptions").textValue());
+
+        actionNode.setProps(actionProps);
+        relation.setId("classifier_after_" + node.get("id").textValue()); //TODO Придумай блин как генерировать ID
+        ArrayList<Relation> actionEdges = new ArrayList<>();
+        actionEdges.add(relation);
+        actionNode.setEdgeList(actionEdges);
+
+        classifierNode.setId("classifier_after_" + node.get("id").textValue());
+        ArrayList<Relation> classifierEdges = new ArrayList<>();
+
+        JsonNode edgeList = node.get("edgeList");
+        for (JsonNode edge : edgeList) {
+            relation = mapper.treeToValue(edge, Relation.class);
+            classifierEdges.add(relation);
+        }
+        classifierNode.setEdgeList(classifierEdges);
+
+        return nodeList;
+    }
+
+    private ArrayList<Node> splitSpecifierNode(JsonNode node) throws IOException{
+        ObjectMapper mapper = new ObjectMapper();
         ValidateNode validateNode = new ValidateNode();
+        ActionNode actionNode = new ActionNode();
+        ExtractNode extractNode = new ExtractNode();
         ArrayList<Node> nodeList = new ArrayList<>();
         nodeList.add(validateNode);
-        String specifierId = node.get("id").textValue();
-        String currentVarName;
+        nodeList.add(actionNode);
+        nodeList.add(extractNode);
 
-        //Setup Validate Node
+        String specifierId = node.get("id").textValue();
+        JsonNode props = node.get("props");
+        String currentVarName = props.get("varName").textValue();
+
+                //Setup Validate Node
         validateNode.setId(specifierId);
         ValidateProps validateProps = new ValidateProps();
-        ArrayList<ValidatePropsVarListItem> varListItems = new ArrayList<>();
-        for (JsonNode props : node.get("props")) {
-            ValidatePropsVarListItem varListItem = new ValidatePropsVarListItem();
-            ActionNode actionNode = new ActionNode();
-            ExtractNode extractNode = new ExtractNode();
-            nodeList.add(actionNode);
-            nodeList.add(extractNode);
-
-            currentVarName = props.get("varName").textValue();
-            varListItem.setVarName(currentVarName);
-            varListItem.setRawVarName("raw_" + currentVarName);
-            Relation relation = new Relation();
-            relation.setId(specifierId + "_action_" + props.get("varName").textValue());
-            ArrayList<Relation> relations = new ArrayList<>();
-            relations.add(relation);
-            varListItem.setEdgeIfEmpty( relations);
-
-            varListItems.add(varListItem);
-
-            actionNode.setId(specifierId + "_action_" + currentVarName);
-            ActionProps actionProps = new ActionProps();
-            actionProps.setSynthText(props.get("synthText").textValue().replace(",", "\\,"));
-            actionProps.setGrammar(props.get("grammar").textValue());
-            actionProps.setOptions(props.get("asrOptions").textValue());
-            actionNode.setProps(actionProps);
-
-            Relation actionEdge = new Relation();
-            actionEdge.setId(specifierId + "_extract_" + currentVarName);
-            ArrayList<Relation> edgeList = new ArrayList<>();
-            edgeList.add(actionEdge);
-            actionNode.setEdgeList(edgeList);
-
-            extractNode.setId(specifierId + "_extract_" + currentVarName);
-            ExtractProps extractProps = new ExtractProps();
-            extractProps.setVarName(currentVarName);
-            extractProps.setRawVarName("raw_" + currentVarName);
-            ArrayList<String> keywords = new ArrayList<>();
-            for (JsonNode keyword: props.get("keywords")) {
-                keywords.add(keyword.textValue());
-            }
-            extractProps.setMatch(keywords);
-            extractNode.setProps(extractProps);
-            Relation extractEdge = new Relation();
-            extractEdge.setId(validateNode.getId());
-            edgeList = new ArrayList<>();
-            edgeList.add(extractEdge);
-            extractNode.setEdgeList(edgeList);
-        }
-        validateProps.setVarList(varListItems);
-        validateProps.setEdgeIfSuccess(node.get("edgeList").elements().next().get("id").textValue());
+        validateProps.setVarName(props.get("varName").textValue());
+        validateProps.setEdgeIfEmpty(mapper.treeToValue(node.get("edgeIfEmpty"), Relation.class));
         validateNode.setProps(validateProps);
+        ArrayList<Relation> edgeList = new ArrayList<>();
+        edgeList.add(mapper.treeToValue(node.get("edgeList"), Relation.class));
+        validateNode.setEdgeList(edgeList);
+
+        extractNode.setId(specifierId + "_extract_" + currentVarName);
+        ExtractProps extractProps = new ExtractProps();
+        extractProps.setVarName(currentVarName);
+        if (props.get("match") != null) {
+            ArrayList<String> match = new ArrayList<>();
+            for (JsonNode keyword: props.get("match")) {
+                match.add(keyword.textValue());
+            }
+            extractProps.setMatch(match);
+        }
+        if (props.get("matchFile") != null) {
+            extractProps.setMatchFile(props.get("matchFile").textValue());
+        }
+        extractNode.setProps(extractProps);
+        Relation extractEdge = new Relation();
+        extractEdge.setId(validateNode.getId());
+        edgeList = new ArrayList<>();
+        edgeList.add(extractEdge);
+        extractNode.setEdgeList(edgeList);
+
+        actionNode.setId(specifierId + "_action_" + currentVarName);
+        ActionProps actionProps = new ActionProps();
+        actionProps.setSynthText(props.get("synthText").textValue().replace(",", "\\,"));
+        actionProps.setGrammar(props.get("grammar").textValue());
+        actionProps.setOptions(props.get("asrOptions").textValue());
+        actionNode.setProps(actionProps);
+        Relation actionEdge = new Relation();
+        actionEdge.setId(specifierId + "_extract_" + currentVarName);
+        edgeList = new ArrayList<>();
+        actionEdge.setId(extractNode.getId());
+        edgeList.add(actionEdge);
+        actionNode.setEdgeList(edgeList);
+
         return nodeList;
     }
 }

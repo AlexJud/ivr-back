@@ -11,4 +11,10 @@ public class EndProps {
         this.synthText = synthText;
     }
 
+    @Override
+    public String toString() {
+        return "EndProps{" +
+                "synthText='" + synthText + '\'' +
+                '}';
+    }
 }

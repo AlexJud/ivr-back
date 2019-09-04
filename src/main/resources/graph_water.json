@@ -2,10 +2,10 @@
   {
     "type": "ActionNode",
     "id": "root",
-    "props": {
+    "props":{
       "synthText": "Здравствуйте, меня зовут Елена! Вы начинаете оформление заказа. Скажите, пожалуйста, как я могу к Вам обращаться?",
       "grammar": "http://localhost/theme:graph",
-      "options": "b=1&t=5000&nit=5000"
+      "options": "b=0&t=5000&nit=5000"
     },
     "edgeList": [
       {
@@ -17,9 +17,8 @@
     "id": "ext_name",
     "type": "ExtractNode",
     "props": {
-      "varName": "person",
-      "rawVarName": "rawPerson",
-      "matchFile": "russian_name.txt"
+      "varName": "name",
+      "matchFile": "russian_names.csv"
     },
     "edgeList": [
       {
@@ -34,26 +33,51 @@
       "varList": [
         {
           "varName": "name",
-          "rawVarName": "rawName",
-          "edgeIfEmpty": "root"
+          "repeatMax": 1,
+          "edgeIfEmpty": [
+            {
+              "id": "repeat_name"
+            }
+          ]
         },
         {
           "varName": "city",
-          "rawVarName": "rawCity",
-          "edgeIfEmpty": "ask_city"
+          "repeatMax": 2,
+          "edgeIfEmpty": [
+            {
+              "id": "ask_city"
+            },
+            {
+              "id": "repeat_city"
+            }
+          ]
         },
         {
           "varName": "address",
-          "rawVarName": "rawAddress",
-          "edgeIfEmpty": "ask_address"
+          "edgeIfEmpty":[
+            {
+              "id": "ask_address"
+            }
+          ]
         },
         {
           "varName": "time",
-          "rawVarName": "rawAddress",
-          "edgeIfEmpty": "ask_time"
+          "edgeIfEmpty":[
+            {
+              "id": "ask_time"
+            }
+          ]
+        },
+        {
+          "varName": "phone",
+          "edgeIfEmpty":[
+            {
+              "id": "ask_phone"
+            }
+          ]
         }
       ],
-      "edgeIfSuccess": "end"
+      "edgeIfSuccess": "summary"
     }
   },
   {
@@ -62,11 +86,29 @@
     "props": {
       "synthText": "@name#, доставка в какой город Вас интересует?",
       "grammar": "http://localhost/theme:graph",
-      "options": "b=1&t=5000&nit=5000"
+      "options": "b=0&t=5000&nit=5000"
     },
+    "repeatMax": 1,
     "edgeList": [
       {
         "id": "ext_city"
+      },
+      {
+        "id": "classify_city_direction"
+      }
+    ]
+  },
+  {
+    "type": "ActionNode",
+    "id": "repeat_city",
+    "props": {
+      "synthText": "@name#, к сожалению названный Вами город не входит в список доступных для доставки городов. Чтобы выбрать другой город скажите «другой»‎, чтобы продолжить с текущим скажите «продолжить»",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=0&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "classify_city_direction"
       }
     ]
   },
@@ -75,7 +117,22 @@
     "type": "ExtractNode",
     "props": {
       "varName": "city",
-      "rawVarName": "rawCity"
+      "rawVarName": "rawCity",
+      "match": [
+        "Челябинск",
+        "Екатеринбург",
+        "Еманжелинск",
+        "Златоуст",
+        "Копейск",
+        "Коркино",
+        "Курган",
+        "Кыштым",
+        "Магнитогорск",
+        "Миасс",
+        "Озерск",
+        "Чебаркуль",
+        "Челябинск"
+      ]
     },
     "edgeList": [
       {
@@ -89,7 +146,7 @@
     "props": {
       "synthText": "@name# назовите, пожалуйста, адрес доставки",
       "grammar": "http://localhost/theme:graph",
-      "options": "b=1&t=5000&nit=5000"
+      "options": "b=0&t=10000&nit=10000"
     },
     "edgeList": [
       {
@@ -101,8 +158,8 @@
     "id": "ext_address",
     "type": "ExtractNode",
     "props": {
-      "varName": "city",
-      "rawVarName": "rawCity"
+      "varName": "address",
+      "rawVarName": "rawAddress"
     },
     "edgeList": [
       {
@@ -116,7 +173,7 @@
     "props": {
       "synthText": "@name#, укажите, пожалуйста, удобное для Вас время доставки",
       "grammar": "http://localhost/theme:graph",
-      "options": "b=1&t=5000&nit=5000"
+      "options": "b=0&t=5000&nit=5000"
     },
     "edgeList": [
       {
@@ -141,9 +198,9 @@
     "type": "ActionNode",
     "id": "ask_phone",
     "props": {
-      "synthText": "Сохранить телефон с которого Вы звоните как контактный",
+      "synthText": "Сохранить телефон с которого Вы звоните как контактный?",
       "grammar": "http://localhost/theme:graph",
-      "options": "b=1&t=5000&nit=5000"
+      "options": "b=0&t=5000&nit=5000"
     },
     "edgeList": [
       {
@@ -156,7 +213,7 @@
     "type": "ClassifierNode",
     "edgeList": [
       {
-        "id": "validator",
+        "id": "system_phone",
         "match": [
           "да",
           "сохранить",
@@ -168,11 +225,25 @@
         "id": "new_phone",
         "match": [
           "нет",
+          "не",
           "новый",
           "другой",
           "Нет"
         ]
       },
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "id": "system_phone",
+    "type": "SystemNode",
+    "props": {
+      "varName": "phone",
+      "systemVar": "callerId"
+    },
+    "edgeList": [
       {
         "id": "validator"
       }
@@ -192,11 +263,57 @@
     ]
   },
   {
-    "id": "end",
-    "type": "EndNode",
+    "id": "summary",
+    "type": "ActionNode",
     "props": {
-      "synthText": "@name#, Ваш заказ сохранён. Давайте проверим, что получилось. Вас зовут @name#, Ваш город @city#, Ваш адрес @address#, время доставки @time#, телефон для связи @phone#"
-    }
+      "synthText": "@name#, Ваш заказ сохранён. Давайте проверим что получилось. Вас зовут @name#, Ваш город @city#, Ваш адрес @address#, время доставки @time#, телефон для связи @phone#. Если все верно скажите подтверждаю. Если нужно что-то изменить скажите например, изменить телефон",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=0&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "classify_summary"
+      }
+    ]
+  },
+  {
+    "id": "classify_summary",
+    "type": "ClassifierNode",
+    "edgeList": [
+      {
+        "id": "ask_city",
+        "match": [
+          "город"
+        ]
+      },
+      {
+        "id": "ask_address",
+        "match": [
+          "адрес",
+          "улица",
+          "улицу",
+          "дом",
+          "квартира"
+        ]
+      },
+      {
+        "id": "ask_time",
+        "match": [
+          "время"
+        ]
+      },
+      {
+        "id": "ask_phone",
+        "match": [
+          "телефон",
+          "номер",
+          "мобильный"
+        ]
+      },
+      {
+        "id": "end"
+      }
+    ]
   },
   {
     "type": "ActionNode",
@@ -204,11 +321,87 @@
     "props": {
       "synthText": "@name#, назовите Ваш телефон по одной цифре без кода плюс семь",
       "grammar": "http://localhost/theme:graph",
-      "options": "b=1&t=5000&nit=5000"
+      "options": "b=0&t=10000&nit=10000"
     },
     "edgeList": [
       {
         "id": "ext_phone"
+      }
+    ]
+  },
+  {
+    "type": "ActionNode",
+    "id": "wrong_city",
+    "props": {
+      "synthText": "@name#, к сожалению названный Вами город не входит в список доступных для доставки городов. Чтобы выбрать другой город скажите «другой»‎, чтобы продолжить с текущим, скажите «продолжить»",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=0&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "ext_wrong_city"
+      }
+    ]
+  },
+  {
+    "id": "classify_city_direction",
+    "type": "ClassifierNode",
+    "edgeList": [
+      {
+        "id": "system_city",
+        "match": [
+          "продолжить",
+          "далее",
+          "дальше",
+          "продолжаем"
+        ]
+      },
+      {
+        "id": "ask_city",
+        "match": [
+          "изменить",
+          "новый",
+          "другой",
+          "поменять",
+          "измена"
+        ]
+      },
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "id": "system_city",
+    "type": "SystemNode",
+    "props": {
+      "varName": "city",
+      "systemVar": "rawCity"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
+      }
+    ]
+  },
+  {
+    "id": "end",
+    "type": "EndNode",
+    "props": {
+      "synthText": "Ваш заказ сохранён. В скором времени с Вами свяжется оператор"
+    }
+  },
+  {
+    "type": "ActionNode",
+    "id": "repeat_name",
+    "props": {
+      "synthText": "Пожалуйста, повторите как Вас зовут?",
+      "grammar": "http://localhost/theme:graph",
+      "options": "b=0&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "validator"
       }
     ]
   }

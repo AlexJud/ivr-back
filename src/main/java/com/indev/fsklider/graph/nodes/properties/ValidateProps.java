@@ -1,20 +1,19 @@
 package com.indev.fsklider.graph.nodes.properties;
 
+import com.indev.fsklider.graph.nodes.Relation;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-
 @Getter @Setter
 public class ValidateProps {
-    private ArrayList<ValidatePropsVarListItem> varList;
-    private String edgeIfSuccess;
+    private String varName;
+    private Relation edgeIfEmpty;
 
     @Override
     public String toString() {
         return "ValidateProps{" +
-                "varList=" + varList +
-                ", edgeIfSuccess='" + edgeIfSuccess + '\'' +
+                "varName='" + varName + '\'' +
+                ", edgeIfEmpty=" + edgeIfEmpty +
                 '}';
     }
 }
