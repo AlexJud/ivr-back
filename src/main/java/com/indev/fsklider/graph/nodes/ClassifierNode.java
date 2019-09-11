@@ -18,6 +18,7 @@ public class ClassifierNode extends Node {
                 nextNodeId = relation.getId();
             } else {
                 for (String match : relation.getMatch()) {
+                    match = match.toLowerCase();
                     if (asrResult.contains(match)) {
                         contextMap.put("reason", match);
                         nextNodeId = relation.getId();
