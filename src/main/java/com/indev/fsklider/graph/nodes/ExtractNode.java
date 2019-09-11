@@ -67,6 +67,7 @@ public class ExtractNode extends Node {
 
     private void validateFromList(String asrResult) {
         for (String key : props.getMatch()) {
+            key = key.toLowerCase();
             if (asrResult.contains(key)) {
                 insert(props.getVarName(), key);
             }
