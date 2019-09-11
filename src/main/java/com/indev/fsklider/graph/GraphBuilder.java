@@ -1,5 +1,6 @@
 package com.indev.fsklider.graph;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +9,7 @@ import com.indev.fsklider.graph.nodes.properties.ActionProps;
 import com.indev.fsklider.graph.nodes.properties.ExtractProps;
 import com.indev.fsklider.graph.nodes.properties.ValidateProps;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class GraphBuilder {
         HashMap<String, Node> graph = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String filepath = filename + "/src/main/resources" + "/graph.json";
+        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
 //        String filepath = filename + "/src/main/resources" + "/graph.json";
         JsonNode rootNode = mapper.readValue(new FileInputStream(filepath), JsonNode.class);
         Iterator<JsonNode> iterator = rootNode.elements();
@@ -125,15 +127,18 @@ public class GraphBuilder {
         JsonNode props = node.get("props");
         String currentVarName = props.get("varName").textValue();
 
-                //Setup Validate Node
-        validateNode.setId(specifierId);
-        ValidateProps validateProps = new ValidateProps();
-        validateProps.setVarName(props.get("varName").textValue());
-        validateProps.setEdgeIfEmpty(mapper.treeToValue(node.get("edgeIfEmpty"), Relation.class));
-        validateNode.setProps(validateProps);
         ArrayList<Relation> edgeList = new ArrayList<>();
-        edgeList.add(mapper.treeToValue(node.get("edgeList"), Relation.class));
-        validateNode.setEdgeList(edgeList);
+
+        actionNode.setId(specifierId);
+        ActionProps actionProps = new ActionProps();
+        actionProps.setSynthText(props.get("synthText").textValue().replace(",", "\\,"));
+        actionProps.setGrammar(props.get("grammar").textValue());
+        actionProps.setOptions(props.get("asrOptions").textValue());
+        actionNode.setProps(actionProps);
+        Relation actionEdge = new Relation();
+        actionEdge.setId(specifierId + "_extract_" + currentVarName);
+        edgeList.add(actionEdge);
+        actionNode.setEdgeList(edgeList);
 
         extractNode.setId(specifierId + "_extract_" + currentVarName);
         ExtractProps extractProps = new ExtractProps();
@@ -150,23 +155,28 @@ public class GraphBuilder {
         }
         extractNode.setProps(extractProps);
         Relation extractEdge = new Relation();
-        extractEdge.setId(validateNode.getId());
+        extractEdge.setId(currentVarName + "_" + "validator");
         edgeList = new ArrayList<>();
         edgeList.add(extractEdge);
         extractNode.setEdgeList(edgeList);
 
-        actionNode.setId(specifierId + "_action_" + currentVarName);
-        ActionProps actionProps = new ActionProps();
-        actionProps.setSynthText(props.get("synthText").textValue().replace(",", "\\,"));
-        actionProps.setGrammar(props.get("grammar").textValue());
-        actionProps.setOptions(props.get("asrOptions").textValue());
-        actionNode.setProps(actionProps);
-        Relation actionEdge = new Relation();
-        actionEdge.setId(specifierId + "_extract_" + currentVarName);
+                //Setup Validate Node
+        validateNode.setId(currentVarName + "_" + "validator");
+        ValidateProps validateProps = new ValidateProps();
+        validateProps.setVarName(props.get("varName").textValue());
+        for (JsonNode prop : node.get("edgeIfEmpty")) {
+            validateNode.setEdgeIfEmpty(mapper.treeToValue(prop, Relation.class));
+        }
+        validateNode.setProps(validateProps);
         edgeList = new ArrayList<>();
-        actionEdge.setId(extractNode.getId());
-        edgeList.add(actionEdge);
-        actionNode.setEdgeList(edgeList);
+        for (JsonNode prop : node.get("edgeList")) {
+            edgeList.add(mapper.treeToValue(prop, Relation.class));
+        }
+        validateNode.setEdgeList(edgeList);
+
+
+
+
 
         return nodeList;
     }

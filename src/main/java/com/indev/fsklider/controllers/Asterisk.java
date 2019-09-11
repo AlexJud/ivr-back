@@ -13,10 +13,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping
-public class Grammar {
+public class Asterisk {
     @Autowired
     FtpHelper ftpHelper;
 
@@ -32,5 +33,10 @@ public class Grammar {
         }
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage("Grammar file load successful"));
 //        return ResponseEntity.ok(new ResponseMessage("Grammar file load successful"));
+    }
+
+    @GetMapping("/api/vars")
+    public ArrayList<String> getVars() {
+        return null;
     }
 }

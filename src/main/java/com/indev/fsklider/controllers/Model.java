@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 @RestController
 @RequestMapping
@@ -18,7 +17,7 @@ public class Model {
     public ResponseEntity<String> setModel(@RequestBody String model) {
         System.out.println(model);
         try {
-            Files.write(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph.json"), model.getBytes());
+            Files.write(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph_exec.json"), model.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -31,7 +30,7 @@ public class Model {
 
         String str = null;
         try {
-            byte[] array = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph.json"));
+            byte[] array = Files.readAllBytes(Paths.get(System.getProperty("user.dir") + "/src/main/resources" + "/graph_exec.json"));
             str = new String(array, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();

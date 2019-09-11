@@ -1,0 +1,81 @@
+[
+  {
+    "type": "BranchNode",
+    "id": "root",
+    "props": {
+      "synthText": "Здравствуй, дружочек! Чего желаешь?",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "b=0&t=5000&nit=5000"
+    },
+    "edgeList": [
+      {
+        "id": "End node 0",
+        "match": [
+          "отстань",
+          "ничего"
+        ]
+      },
+      {
+        "id": "Specified node 8",
+        "match": []
+      }
+    ]
+  },
+  {
+    "type": "EndNode",
+    "id": "End node 0",
+    "props": {
+      "synthText": "Гори в аду, еретик!"
+    }
+  },
+  {
+    "type": "SpecifierNode",
+    "id": "Specified node 8",
+    "edgeList": [
+      {
+        "id": "Branch node 9"
+      }
+    ],
+    "edgeIfEmpty": [
+      {
+        "id": "End node 10"
+      }
+    ],
+    "props": {
+      "varName": "name",
+      "synthText": "Как тебя зовут?",
+      "asrOptions": "b=1&t=5000&nit=5000",
+      "grammar": "http://localhost/theme:graph",
+      "match": [
+        "иван",
+        "а",
+        "дул",
+        "а",
+        "а",
+        "ф",
+        "вавы",
+        "dsfs",
+        "апап",
+        "шешен"
+      ],
+      "repeatMax": ""
+    }
+  },
+  {
+    "type": "BranchNode",
+    "id": "Branch node 9",
+    "props": {
+      "synthText": "Что будем тестировать, @name# ?",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "b=1&t=5000&nit=5000"
+    },
+    "edgeList": []
+  },
+  {
+    "type": "EndNode",
+    "id": "End node 10",
+    "props": {
+      "synthText": "Я тебя не поняла, уходи в ад."
+    }
+  }
+]

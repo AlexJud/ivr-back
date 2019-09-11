@@ -54,6 +54,7 @@ public class Incoming extends BaseAgiScript {
                 log.info("Выполняется " + currentNode.getClass().getSimpleName() + ": " + currentNode.getId());
                 nextId = currentNode.run();
                 log.info("Node: " + currentNode.getId() + " - завершил выполнение");
+                log.info("Node: " + currentNode.getId() + " - завершил выполнение");
                 context = currentNode.getContext();
 //                if (currentNode instanceof ActionNode) {
 //                    sendSystemSay(callerId, currentNode.getId());

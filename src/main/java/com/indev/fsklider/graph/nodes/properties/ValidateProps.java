@@ -7,13 +7,11 @@ import lombok.Setter;
 @Getter @Setter
 public class ValidateProps {
     private String varName;
-    private Relation edgeIfEmpty;
 
     @Override
     public String toString() {
         return "ValidateProps{" +
                 "varName='" + varName + '\'' +
-                ", edgeIfEmpty=" + edgeIfEmpty +
                 '}';
     }
 }

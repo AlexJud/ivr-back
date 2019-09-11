@@ -9,6 +9,8 @@ import java.util.HashMap;
 @Getter @Setter
 public class ValidateNode extends Node {
     private ValidateProps props;
+    private Relation edgeIfEmpty;
+
 
     @Override
     public String run() {
@@ -20,7 +22,7 @@ public class ValidateNode extends Node {
         if (context.containsKey(props.getVarName())) {
             return getEdgeList().get(0).getId();
         } else  {
-            return props.getEdgeIfEmpty().getId();
+            return getEdgeIfEmpty().getId();
         }
     }
 
