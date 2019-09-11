@@ -53,6 +53,9 @@ public class Incoming extends BaseAgiScript {
                 currentNode.setContext(context);
                 log.info("Выполняется " + currentNode.getClass().getSimpleName() + ": " + currentNode.getId());
                 nextId = currentNode.run();
+                if (nextId == null) {
+                    hangup();
+                }
                 log.info("Node: " + currentNode.getId() + " - завершил выполнение");
                 log.info("Node: " + currentNode.getId() + " - завершил выполнение");
                 context = currentNode.getContext();
