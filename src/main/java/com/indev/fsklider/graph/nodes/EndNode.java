@@ -7,8 +7,7 @@ import com.indev.fsklider.utils.Utils;
 import java.util.Map;
 import java.util.Stack;
 
-public class TransferNode extends Node{
-//    private List<String> props;
+public class EndNode extends Node{
     private EndProps props;
 
     public EndProps getProps() {
@@ -26,9 +25,6 @@ public class TransferNode extends Node{
 
     @Override
     public String run() {
-//        String message = Utils.getMessage(getContext().getRecogResult());
-        String message = getContext().getRecogResult();
-        getContext().getContextMap().put("message", message);
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();
         command.setApp("MRCPSynth");
@@ -36,16 +32,15 @@ public class TransferNode extends Node{
         command.setOption(text);
         getContext().getEvent().setSystemText(Utils.removeBackslash(text));
         commandList.push(command);
-        command = new Command();
-        command.setApp("Hangup");
         getContext().setCommands(commandList);
+        getContext().setEnd(true);
         calculateNext();
-        return null;
+        return "root";
     }
 
     @Override
     public String toString() {
-        return "TransferNode{" +
+        return "EndNode{" +
                 "id=" + getId() +
                 " props=" + props +
                 '}';

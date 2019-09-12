@@ -1,6 +1,5 @@
 package com.indev.fsklider.graph;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +8,6 @@ import com.indev.fsklider.graph.nodes.properties.ActionProps;
 import com.indev.fsklider.graph.nodes.properties.ExtractProps;
 import com.indev.fsklider.graph.nodes.properties.ValidateProps;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +17,7 @@ import java.util.Map;
 
 public class GraphBuilder {
     private String filename;
+    private int i = 0;
 
     public GraphBuilder(String filename) {
         this.filename = filename;
@@ -59,7 +58,7 @@ public class GraphBuilder {
                 SendNode objectNode = mapper.treeToValue(node, SendNode.class);
                 graph.put(objectNode.getId(), objectNode);
             } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.EndNode) {
-                TransferNode objectNode = mapper.treeToValue(node, TransferNode.class);
+                EndNode objectNode = mapper.treeToValue(node, EndNode.class);
                 graph.put(objectNode.getId(), objectNode);
             } else if(NodeType.valueOf(node.get("type").textValue()) == NodeType.SpecifierNode) {
                 for (Node newNode : splitSpecifierNode(node)) {
@@ -92,7 +91,7 @@ public class GraphBuilder {
         JsonNode props = node.get("props");
         actionProps.setSynthText(props.get("synthText").textValue());
         actionProps.setGrammar(props.get("grammar").textValue());
-        actionProps.setOptions(props.get("asrOptions").textValue());
+        actionProps.setOptions("b=0&t=5000&nit=5000");
 
         actionNode.setProps(actionProps);
         relation.setId("classifier_after_" + node.get("id").textValue()); //TODO Придумай блин как генерировать ID
@@ -133,7 +132,7 @@ public class GraphBuilder {
         ActionProps actionProps = new ActionProps();
         actionProps.setSynthText(props.get("synthText").textValue().replace(",", "\\,"));
         actionProps.setGrammar(props.get("grammar").textValue());
-        actionProps.setOptions(props.get("asrOptions").textValue());
+        actionProps.setOptions("b=0&t=5000&nit=5000");
         actionNode.setProps(actionProps);
         Relation actionEdge = new Relation();
         actionEdge.setId(specifierId + "_extract_" + currentVarName);
@@ -155,13 +154,13 @@ public class GraphBuilder {
         }
         extractNode.setProps(extractProps);
         Relation extractEdge = new Relation();
-        extractEdge.setId(currentVarName + "_" + "validator");
+        extractEdge.setId(specifierId + "_" + "validator");
         edgeList = new ArrayList<>();
         edgeList.add(extractEdge);
         extractNode.setEdgeList(edgeList);
 
                 //Setup Validate Node
-        validateNode.setId(currentVarName + "_" + "validator");
+        validateNode.setId(specifierId + "_" + "validator");
         ValidateProps validateProps = new ValidateProps();
         validateProps.setVarName(props.get("varName").textValue());
         for (JsonNode prop : node.get("edgeIfEmpty")) {
@@ -173,10 +172,6 @@ public class GraphBuilder {
             edgeList.add(mapper.treeToValue(prop, Relation.class));
         }
         validateNode.setEdgeList(edgeList);
-
-
-
-
 
         return nodeList;
     }

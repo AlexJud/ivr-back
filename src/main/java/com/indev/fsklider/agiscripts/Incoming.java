@@ -47,26 +47,17 @@ public class Incoming extends BaseAgiScript {
             String nextId = "root";
             while (!context.isEnd()) {
                 if (nextId == null) {
+                    log.info("Нет вариантов для перехода (next Node ID == null). Завершение звонка.");
                     break;
                 }
                 currentNode = graph.get(nextId);
                 currentNode.setContext(context);
                 log.info("Выполняется " + currentNode.getClass().getSimpleName() + ": " + currentNode.getId());
                 nextId = currentNode.run();
-                if (nextId == null) {
-                    hangup();
-                }
+
                 log.info("Node: " + currentNode.getId() + " - завершил выполнение");
                 log.info("Node: " + currentNode.getId() + " - завершил выполнение");
                 context = currentNode.getContext();
-//                if (currentNode instanceof ActionNode) {
-//                    sendSystemSay(callerId, currentNode.getId());
-//                }
-//                if (currentNode instanceof ExtractNode) {
-//                    sendAbonentSay(callerId);
-//                } else if (currentNode instanceof TransferNode) {
-//                    sendCallEnd(callerId);
-//                }
 
                 sendMessage(currentNode, callerId);
                 if (!context.getCommands().empty()) {
@@ -80,6 +71,9 @@ public class Incoming extends BaseAgiScript {
                         log.info("Результат распознавания: " + getVariable("RECOG_INPUT(0)").toLowerCase());
                     }
                 }
+                if (nextId == null) {
+                    hangup();
+                }
             }
             context.setContextMap(new HashMap<>());
             hangup();
@@ -87,6 +81,8 @@ public class Incoming extends BaseAgiScript {
             System.out.println("<<<The user hanged up>>>");
             socket.sendSystemMessage("Звонок завершён");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -113,7 +109,7 @@ public class Incoming extends BaseAgiScript {
             }
             socket.sendUserMessage(callerId, currentNode.getContext().getRecogResult());
 //            sendAbonentSay(callerId);
-        } else if (currentNode instanceof TransferNode) {
+        } else if (currentNode instanceof EndNode) {
             socket.sendServerMessage(context.getEvent().getSystemText());
 
 //          sendCallEnd(callerId);
