@@ -22,16 +22,21 @@ public class EndNode extends Node{
         getContext().setEnd(true);
     }
 
-
     @Override
     public String run() {
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();
+        command.setApp("Hangup");
+        command.setOption("");
+        commandList.push(command);
+
+        command = new Command();
         command.setApp("MRCPSynth");
         String text = replaceVar(props.getSynthText());
         command.setOption(text);
         getContext().getEvent().setSystemText(Utils.removeBackslash(text));
         commandList.push(command);
+
         getContext().setCommands(commandList);
         getContext().setEnd(true);
         calculateNext();

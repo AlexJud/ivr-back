@@ -103,8 +103,17 @@ public class GraphBuilder {
         ArrayList<Relation> classifierEdges = new ArrayList<>();
 
         JsonNode edgeList = node.get("edgeList");
+        boolean isDefaultExist = false;
         for (JsonNode edge : edgeList) {
+            if(edge.get("match") == null) {
+                isDefaultExist = true;
+            }
             relation = mapper.treeToValue(edge, Relation.class);
+            classifierEdges.add(relation);
+        }
+        if (!isDefaultExist) {
+            relation = new Relation();
+            relation.setId(node.get("id").textValue());
             classifierEdges.add(relation);
         }
         classifierNode.setEdgeList(classifierEdges);

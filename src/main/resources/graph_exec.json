@@ -5,77 +5,69 @@
     "props": {
       "synthText": "Здравствуй, дружочек! Чего желаешь?",
       "grammar": "http://localhost/theme:graph",
-      "asrOptions": "b=0&t=5000&nit=5000"
+      "asrOptions": ""
     },
     "edgeList": [
       {
-        "id": "End node 0",
+        "id": "Branch_node_0",
         "match": [
-          "отстань",
-          "ничего"
+          "привет"
         ]
       },
       {
-        "id": "Specified node 8",
-        "match": []
+        "id": "Branch_node_1",
+        "match": [
+          "пока"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "BranchNode",
+    "id": "Branch_node_0",
+    "props": {
+      "synthText": "Привет",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": ""
+    },
+    "edgeList": [
+      {
+        "id": "End_node_0",
+        "match": [
+          "пока"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "BranchNode",
+    "id": "Branch_node_1",
+    "props": {
+      "synthText": "Пока",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": ""
+    },
+    "edgeList": [
+      {
+        "id": "End_node_1",
+        "match": [
+          "давай"
+        ]
       }
     ]
   },
   {
     "type": "EndNode",
-    "id": "End node 0",
+    "id": "End_node_0",
     "props": {
-      "synthText": "Гори в аду, еретик!"
+      "synthText": "До свидания"
     }
-  },
-  {
-    "type": "SpecifierNode",
-    "id": "Specified node 8",
-    "edgeList": [
-      {
-        "id": "Branch node 9"
-      }
-    ],
-    "edgeIfEmpty": [
-      {
-        "id": "End node 10"
-      }
-    ],
-    "props": {
-      "varName": "name",
-      "synthText": "Как тебя зовут?",
-      "asrOptions": "b=1&t=5000&nit=5000",
-      "grammar": "http://localhost/theme:graph",
-      "match": [
-        "иван",
-        "а",
-        "дул",
-        "а",
-        "а",
-        "ф",
-        "вавы",
-        "dsfs",
-        "апап",
-        "шешен"
-      ],
-      "repeatMax": ""
-    }
-  },
-  {
-    "type": "BranchNode",
-    "id": "Branch node 9",
-    "props": {
-      "synthText": "Что будем тестировать, @name# ?",
-      "grammar": "http://localhost/theme:graph",
-      "asrOptions": "b=1&t=5000&nit=5000"
-    },
-    "edgeList": []
   },
   {
     "type": "EndNode",
-    "id": "End node 10",
+    "id": "End_node_1",
     "props": {
-      "synthText": "Я тебя не поняла, уходи в ад."
+      "synthText": "Давай, не болей"
     }
   }
 ]

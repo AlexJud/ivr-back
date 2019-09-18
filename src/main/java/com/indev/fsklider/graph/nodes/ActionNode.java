@@ -20,15 +20,34 @@ public class ActionNode extends Node {
 
     @Override
     public String run() {
+        String text = replaceVar(props.getSynthText());
+        if (getRepeatCount() == 3) {
+            text = replaceVar("К сожалению, не удалось распознать ваш ответ. Звонок будет завершён.");
+            hangup();
+            setRepeatCount(0);
+        }
+        synthesizeAndRecognize(text);
+        setRepeatCount(getRepeatCount() + 1);
+        return calculateNext();
+    }
+
+    private void synthesizeAndRecognize(String text) {
         Stack<Command> commandList = getContext().getCommands();
         Command command = new Command();
         command.setApp("SynthAndRecog");
-        String text = replaceVar(props.getSynthText());
         command.setOption(text + ", " +  props.getGrammar() + ", " + props.getOptions());
         getContext().getEvent().setSystemText(Utils.removeBackslash(text));
         commandList.push(command);
         getContext().setCommands(commandList);
-        return calculateNext();
+    }
+
+    private void hangup() {
+        Stack<Command> commandList = getContext().getCommands();
+        Command command = new Command();
+        command.setApp("Hangup");
+        command.setOption("");
+        commandList.push(command);
+        getContext().setCommands(commandList);
     }
 
     public String getMessage() {
