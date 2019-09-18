@@ -172,8 +172,21 @@ public class GraphBuilder {
         validateNode.setId(specifierId + "_" + "validator");
         ValidateProps validateProps = new ValidateProps();
         validateProps.setVarName(props.get("varName").textValue());
-        for (JsonNode prop : node.get("edgeIfEmpty")) {
-            validateNode.setEdgeIfEmpty(mapper.treeToValue(prop, Relation.class));
+
+        Relation relation = new Relation();
+        if (node.get("edgeIfEmpty") == null) {
+            relation.setId(specifierId);
+            validateNode.setEdgeIfEmpty(relation);
+        } else {
+            Relation[] relations = mapper.treeToValue(node.get("edgeIfEmpty"), Relation[].class);
+            if (relations.length == 0) {
+                relation.setId(specifierId);
+                validateNode.setEdgeIfEmpty(relation);
+            } else  {
+                for (JsonNode prop : node.get("edgeIfEmpty")) {
+                    validateNode.setEdgeIfEmpty(mapper.treeToValue(prop, Relation.class));
+                }
+            }
         }
         validateNode.setProps(validateProps);
         edgeList = new ArrayList<>();

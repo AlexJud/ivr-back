@@ -18,7 +18,6 @@ public class ValidateNode extends Node {
     }
 
     private String calculateNext() {
-        System.out.println(this);
         HashMap<String, String> context = getContext().getContextMap();
         if (context.containsKey(props.getVarName())) {
             return getEdgeList().get(0).getId();
