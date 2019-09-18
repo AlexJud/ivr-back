@@ -67,7 +67,12 @@ public class Incoming extends BaseAgiScript {
                         log.info("Команда: " + command.getApp());
                         log.info("Опции: " + command.getOption());
                         exec(command.getApp(), command.getOption());
-                        context.setRecogResult(getVariable("RECOG_INPUT(0)").toLowerCase());
+                        String answer = getVariable("RECOG_INPUT(0)");
+                        if (answer != null) {
+                            context.setRecogResult(answer.toLowerCase());
+                        } else {
+                            context.setRecogResult(answer);
+                        }
                         log.info("Результат распознавания: " + getVariable("RECOG_INPUT(0)").toLowerCase());
                     }
                 }

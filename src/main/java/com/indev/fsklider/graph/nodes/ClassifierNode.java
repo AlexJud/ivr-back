@@ -14,7 +14,7 @@ public class ClassifierNode extends Node {
 //        System.out.println(asrResult);
         String nextNodeId = null;
         for (Relation relation : getEdgeList()) {
-            if (relation.getMatch() == null) {
+            if (relation.getMatch() == null || relation.getMatch().size() == 0) {
                 nextNodeId = relation.getId();
             } else {
                 for (String match : relation.getMatch()) {
