@@ -105,10 +105,10 @@ public class GraphBuilder {
         JsonNode edgeList = node.get("edgeList");
         boolean isDefaultExist = false;
         for (JsonNode edge : edgeList) {
-            if(edge.get("match") == null) {
+            relation = mapper.treeToValue(edge, Relation.class);
+            if(relation.getMatch() == null || relation.getMatch().size() == 0) {
                 isDefaultExist = true;
             }
-            relation = mapper.treeToValue(edge, Relation.class);
             classifierEdges.add(relation);
         }
         if (!isDefaultExist) {

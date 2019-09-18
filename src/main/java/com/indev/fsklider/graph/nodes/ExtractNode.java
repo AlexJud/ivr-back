@@ -35,7 +35,7 @@ public class ExtractNode extends Node {
             log.info("Выбрано сопоставление с файлом ключей");
             validateFromFile(props.getMatchFile(), asrResult);
         //Проверяем есть ли список ключей
-        } else if (props.getMatch() != null) {
+        } else if (props.getMatch() != null || props.getMatch().size() != 0) {
             log.info("Выбрано сопоставление по масиву ключей");
             validateFromList(asrResult);
         //Если ничего нет и сравнивать не с чем, записываем ответ как есть
