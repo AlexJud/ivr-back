@@ -16,8 +16,9 @@ public class SystemNode extends Node {
         String sysVar = getContext().getContextMap().get(props.getSystemVar());
         if (sysVar == null) {
             getContext().getContextMap().put(props.getVarName(), props.getSystemVar());
+        } else  {
+            getContext().getContextMap().put(props.getVarName(), sysVar);
         }
-        getContext().getContextMap().put(props.getVarName(), sysVar);
         return edgeList.get(0).getId();
     }
 
