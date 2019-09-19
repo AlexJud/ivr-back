@@ -28,7 +28,7 @@ public class ExtractNode extends Node {
     @Override
     public String run() {
         @NotNull String asrResult = getContext().getRecogResult();
-        String raw = "raw" + "_" + props.getVarName();
+        String raw = "raw" + props.getVarName();
         getContext().getContextMap().put(raw, asrResult);
 
         //Проверяем есть ли файл с ключами
@@ -36,7 +36,7 @@ public class ExtractNode extends Node {
             log.info("Выбрано сопоставление с файлом ключей");
             validateFromFile(props.getMatchFile(), asrResult);
         //Проверяем есть ли список ключей
-        } else if (props.getMatch()== null || props.getMatch().size() != 0) {
+        } else if (props.getMatch() != null && props.getMatch().size() != 0) {
             log.info("Выбрано сопоставление по масиву ключей");
             validateFromList(asrResult);
         //Если ничего нет и сравнивать не с чем, записываем ответ как есть

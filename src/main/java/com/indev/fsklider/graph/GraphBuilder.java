@@ -155,12 +155,9 @@ public class GraphBuilder {
         extractNode.setJId(specifierId);
         ExtractProps extractProps = new ExtractProps();
         extractProps.setVarName(currentVarName);
-        if (props.get("match") != null) {
-            ArrayList<String> match = new ArrayList<>();
-            for (JsonNode keyword: props.get("match")) {
-                match.add(keyword.textValue());
-            }
-            extractProps.setMatch(match);
+        Relation[] relations = mapper.treeToValue(node.get("edgeList"), Relation[].class);
+        for (Relation relation : relations) {
+            extractProps.setMatch(relation.getMatch());
         }
         if (props.get("matchFile") != null) {
             extractProps.setMatchFile(props.get("matchFile").textValue());
@@ -183,7 +180,7 @@ public class GraphBuilder {
             relation.setId(specifierId);
             validateNode.setEdgeIfEmpty(relation);
         } else {
-            Relation[] relations = mapper.treeToValue(node.get("edgeIfEmpty"), Relation[].class);
+            relations = mapper.treeToValue(node.get("edgeIfEmpty"), Relation[].class);
             if (relations.length == 0) {
                 relation.setId(specifierId);
                 validateNode.setEdgeIfEmpty(relation);

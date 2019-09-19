@@ -29,7 +29,8 @@ public class ValidateNode extends Node {
     @Override
     public String toString() {
         return "ValidateNode{" +
-                "props=" + props +
+                "id=" + getId() +
+                " props=" + props +
                 ", edgeIfEmpty=" + edgeIfEmpty +
                 ", edgeList=" + getEdgeList() +
                 '}';
