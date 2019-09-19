@@ -28,7 +28,8 @@ public class ExtractNode extends Node {
     @Override
     public String run() {
         @NotNull String asrResult = getContext().getRecogResult();
-//        getContext().getContextMap().put(props.getRawVarName(), asrResult);
+        String raw = "raw" + "_" + props.getVarName();
+        getContext().getContextMap().put(raw, asrResult);
 
         //Проверяем есть ли файл с ключами
         if (props.getMatchFile() != null) {

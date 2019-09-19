@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 @Getter @Setter
 public abstract class Node{
     private String id;
+    private String jId;
     private List<Relation> edgeList;
     private Integer repeatCount = 0;
     private Context context;

@@ -86,6 +86,7 @@ public class GraphBuilder {
         nodeList.add(classifierNode);
 
         actionNode.setId(node.get("id").textValue());
+        actionNode.setJId(node.get("id").textValue());
 
         ActionProps actionProps = new ActionProps();
         JsonNode props = node.get("props");
@@ -100,6 +101,7 @@ public class GraphBuilder {
         actionNode.setEdgeList(actionEdges);
 
         classifierNode.setId("classifier_after_" + node.get("id").textValue());
+        classifierNode.setJId("classifier_after_" + node.get("id").textValue());
         ArrayList<Relation> classifierEdges = new ArrayList<>();
 
         JsonNode edgeList = node.get("edgeList");
@@ -138,6 +140,7 @@ public class GraphBuilder {
         ArrayList<Relation> edgeList = new ArrayList<>();
 
         actionNode.setId(specifierId);
+        actionNode.setJId(specifierId);
         ActionProps actionProps = new ActionProps();
         actionProps.setSynthText(props.get("synthText").textValue().replace(",", "\\,"));
         actionProps.setGrammar(props.get("grammar").textValue());
@@ -149,6 +152,7 @@ public class GraphBuilder {
         actionNode.setEdgeList(edgeList);
 
         extractNode.setId(specifierId + "_extract_" + currentVarName);
+        extractNode.setJId(specifierId);
         ExtractProps extractProps = new ExtractProps();
         extractProps.setVarName(currentVarName);
         if (props.get("match") != null) {
@@ -170,6 +174,7 @@ public class GraphBuilder {
 
                 //Setup Validate Node
         validateNode.setId(specifierId + "_" + "validator");
+        validateNode.setJId(specifierId);
         ValidateProps validateProps = new ValidateProps();
         validateProps.setVarName(props.get("varName").textValue());
 

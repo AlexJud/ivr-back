@@ -51,6 +51,7 @@ public class Incoming extends BaseAgiScript {
                     break;
                 }
                 currentNode = graph.get(nextId);
+                socket.sendHighlightMessage(currentNode.getJId() == null ? currentNode.getId() : currentNode.getJId());
                 currentNode.setContext(context);
                 log.info("Выполняется " + currentNode.getClass().getSimpleName() + ": " + currentNode.getId());
                 nextId = currentNode.run();
@@ -73,7 +74,7 @@ public class Incoming extends BaseAgiScript {
                         } else {
                             context.setRecogResult(answer);
                         }
-                        log.info("Результат распознавания: " + getVariable("RECOG_INPUT(0)").toLowerCase());
+                        log.info("Результат распознавания: " + answer);
                     }
                 }
                 if (nextId == null) {

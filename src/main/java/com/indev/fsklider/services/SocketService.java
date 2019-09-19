@@ -30,6 +30,17 @@ public class SocketService {
         fireGreeting(message);
     }
 
+    public void sendHighlightMessage(String text) {
+        SystemMessage message = new SystemMessage();
+        Date curDate = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        message.setDate(format.format(curDate));
+        message.setType(MessageType.HIGHLIGHT);
+        message.setLevel("highlight");
+        message.setMessage(text);
+        fireGreeting(message);
+    }
+
     public void sendServerMessage(String text) {
         ServerMessage message = new ServerMessage();
         Date curDate = new Date();
@@ -51,4 +62,6 @@ public class SocketService {
         message.setMessage(text);
         fireGreeting(message);
     }
+
+
 }
