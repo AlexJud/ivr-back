@@ -14,6 +14,7 @@ import org.asteriskjava.fastagi.AgiException;
 import org.asteriskjava.fastagi.AgiRequest;
 import org.asteriskjava.fastagi.BaseAgiScript;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Stack;
 
 @Service
+@Scope("request")
 public class Incoming extends BaseAgiScript {
 
     @Autowired

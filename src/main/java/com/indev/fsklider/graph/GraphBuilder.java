@@ -135,7 +135,7 @@ public class GraphBuilder {
 
         String specifierId = node.get("id").textValue();
         JsonNode props = node.get("props");
-        String currentVarName = props.get("varName").textValue();
+        String currentVarName = props.get("varName").textValue().trim();
 
         ArrayList<Relation> edgeList = new ArrayList<>();
 
@@ -173,7 +173,7 @@ public class GraphBuilder {
         validateNode.setId(specifierId + "_" + "validator");
         validateNode.setJId(specifierId);
         ValidateProps validateProps = new ValidateProps();
-        validateProps.setVarName(props.get("varName").textValue());
+        validateProps.setVarName(props.get("varName").textValue().trim());
 
         Relation relation = new Relation();
         if (node.get("edgeIfEmpty") == null) {
