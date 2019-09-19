@@ -74,7 +74,7 @@ public class Incoming extends BaseAgiScript {
                         if (answer != null) {
                             context.setRecogResult(answer.toLowerCase());
                         } else {
-                            context.setRecogResult(answer);
+                            context.setRecogResult("");
                         }
                         log.info("Результат распознавания: " + answer);
                     }
