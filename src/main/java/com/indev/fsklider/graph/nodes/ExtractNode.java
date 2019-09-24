@@ -27,6 +27,7 @@ public class ExtractNode extends Node {
 
     @Override
     public String run() {
+        log.info("Выполняется " + this.getClass().getSimpleName() + ": " + getId());
         @NotNull String asrResult = getContext().getRecogResult();
         String raw = "raw" + props.getVarName();
         getContext().getContextMap().put(raw, asrResult);
@@ -44,7 +45,7 @@ public class ExtractNode extends Node {
             log.info("Выбрана запись ответа без сравнения");
             getRawRecognize(asrResult);
         }
-        log.info("Контекст: " + Collections.singletonList(getContext().getContextMap()));
+        log.info("Содержимое контекста: " + Collections.singletonList(getContext().getContextMap()));
         return getEdgeList().get(0).getId();
     }
 

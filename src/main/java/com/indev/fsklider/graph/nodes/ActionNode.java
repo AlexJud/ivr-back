@@ -1,12 +1,15 @@
 package com.indev.fsklider.graph.nodes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.indev.fsklider.agiscripts.Incoming;
 import com.indev.fsklider.graph.nodes.properties.ActionProps;
 import com.indev.fsklider.graph.results.Command;
 import com.indev.fsklider.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.log4j.Logger;
 
+import java.util.Collections;
 import java.util.Stack;
 @Getter @Setter
 public class ActionNode extends Node {
@@ -14,12 +17,15 @@ public class ActionNode extends Node {
     @JsonProperty("props")
     private ActionProps props;
 
+    private static final Logger log = Logger.getLogger(Incoming.class);
+
     private String calculateNext() {
         return getEdgeList().get(0).getId();
     }
 
     @Override
     public String run() {
+        log.info("Выполняется " + this.getClass().getSimpleName() + ": " + getId());
         String text = replaceVar(props.getSynthText());
         if (getRepeatCount() == 3) {
             text = replaceVar("К сожалению, не удалось распознать ваш ответ. Звонок будет завершён.");
@@ -28,7 +34,11 @@ public class ActionNode extends Node {
         }
         synthesizeAndRecognize(text);
         setRepeatCount(getRepeatCount() + 1);
-        return calculateNext();
+        String nextId = calculateNext();
+        log.info("Node: " + getId() + " - завершил выполнение");
+        log.info("Содержимое контекста: " + Collections.singletonList(getContext()));
+        log.info("Следующий Node: " + nextId + "\n");
+        return nextId;
     }
 
     private void synthesizeAndRecognize(String text) {
@@ -42,12 +52,7 @@ public class ActionNode extends Node {
     }
 
     private void hangup() {
-        Stack<Command> commandList = getContext().getCommands();
-        Command command = new Command();
-        command.setApp("Hangup");
-        command.setOption("");
-        commandList.push(command);
-        getContext().setCommands(commandList);
+        getContext().setEnd(true);
     }
 
     public String getMessage() {
