@@ -37,7 +37,7 @@ public class Incoming extends BaseAgiScript {
     @Getter
     private GraphBuilder builder = null;
     @Setter
-    private boolean hangup = false;
+    private boolean hangup;
 
 //    private Map<String, ArrayList<Edge>> edgeMap = null;
 //    private Map<String, Node> graph = null;
@@ -49,6 +49,7 @@ public class Incoming extends BaseAgiScript {
             builder = new GraphBuilder(System.getProperty("user.dir"));
             builder.getGraph();
 
+            this.hangup = false;
             answer();
 
             String callerId = getVariable("CALLERID(ANI)");
