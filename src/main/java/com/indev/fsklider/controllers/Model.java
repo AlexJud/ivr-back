@@ -1,5 +1,6 @@
 package com.indev.fsklider.controllers;
 
+import com.indev.fsklider.dto.NodeDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 @RestController
 @RequestMapping
 public class Model {
+
     @CrossOrigin
     @PostMapping("/api/json")
     public ResponseEntity<String> setModel(@RequestBody String model) {
@@ -36,5 +38,13 @@ public class Model {
             e.printStackTrace();
         }
         return ResponseEntity.ok(str);
+    }
+
+    @CrossOrigin
+    @PostMapping("/api/test")
+    public ResponseEntity test(@RequestBody NodeDTO[] dto){
+        System.out.println("DTO " + dto.length);
+
+        return ResponseEntity.ok().build();
     }
 }

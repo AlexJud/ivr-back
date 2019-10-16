@@ -1,12 +1,19 @@
 package com.indev.fsklider.agiscripts;
 
+import com.indev.fsklider.commands.SpeechAndHangup;
 import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.context.Context;
 import com.indev.fsklider.graph.nodes.*;
 import com.indev.fsklider.graph.results.Command;
+import com.indev.fsklider.models.Dialog;
+import com.indev.fsklider.models.Edge;
 import com.indev.fsklider.services.SocketService;
+import com.indev.fsklider.utils.Utils;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.log4j.Logger;
 import org.asteriskjava.fastagi.AgiChannel;
+import org.asteriskjava.fastagi.AgiException;
 import org.asteriskjava.fastagi.AgiRequest;
 import org.asteriskjava.fastagi.BaseAgiScript;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,59 +21,161 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.lang.reflect.AnnotatedType;
+import java.util.*;
 
 @Service
 @Scope("request")
 public class Incoming extends BaseAgiScript {
 
     @Autowired
+    @Getter
     SocketService socket;
 
     private Context context = new Context();
     private static final Logger log = Logger.getLogger(Incoming.class);
+    @Getter
+    private GraphBuilder builder = null;
+    @Setter
+    private boolean hangup = false;
+
+//    private Map<String, ArrayList<Edge>> edgeMap = null;
+//    private Map<String, Node> graph = null;
+//    private HashMap<String, String> variableMap = null;
+
     public void service(AgiRequest request, AgiChannel channel) {
         try {
+            Dialog currentNode;
+            builder = new GraphBuilder(System.getProperty("user.dir"));
+            builder.getGraph();
+
             answer();
+
             String callerId = getVariable("CALLERID(ANI)");
+            log.info("Поступил звонок с номера " + callerId);
+
             context.getContextMap().put("callerId", callerId);
             context.setCallerId(callerId);
-            log.info("Поступил звонок с номера " + callerId);
-            Node currentNode;
-            GraphBuilder builder = new GraphBuilder(System.getProperty("user.dir"));
-            Map<String, Node> graph = builder.getGraph();
+
+//       ---------------- construct Edges
+
             context.setEnd(false);
             String nextId = "root";
+
+
             while (!context.isEnd()) {
-                currentNode = graph.get(nextId);
-                socket.sendHighlightMessage(currentNode.getJId() == null ? currentNode.getId() : currentNode.getJId());
-                currentNode.setContext(context);
-                nextId = currentNode.run();
-                if (nextId == null) {
-                    log.info("Нет вариантов для перехода (next Node ID == null). Завершение звонка.");
+                int counterRepeat = 1;
+
+                currentNode = builder.getNodeMap().get(nextId);
+                socket.sendHighlightMessage(currentNode.getId());
+
+//                if (currentNode instanceof Dialog) {
+
+
+//                 ---------------   execute node processes -> ACTION
+                log.info("TRACE Executable class" + currentNode);
+                currentNode.run(this);
+
+                if (hangup){
+                    context.setEnd(true);
                     break;
                 }
-                context = currentNode.getContext();
 
-                sendMessage(currentNode, callerId);
-                if (!context.getCommands().empty()) {
-                    Stack<Command> commands = context.getCommands();
-                    while (!commands.empty()) {
-                        Command command = commands.pop();
-                        log.info("Команда: " + command.getApp());
-                        log.info("Опции: " + command.getOption());
-                        exec(command.getApp(), command.getOption());
-                        String answer = getVariable("RECOG_INPUT(0)");
-                        if (answer != null) {
-                            context.setRecogResult(answer.toLowerCase());
-                        } else {
-                            context.setRecogResult("");
-                        }
-                        log.info("Результат распознавания: " + answer);
-                    }
+//                    --------------  start to choose next node
+
+                ArrayList<Edge> edges = builder.getEdgeMap().get(currentNode.getId());
+
+//                       ------------------------------ temp
+//                if (result == null || edges == null || edges.size() == 0) {
+//                    log.warn("TRACE 1");
+//                    context.setEnd(true);
+//                    break;
+//                        --------------------------------temp
+//                }
+                if (edges.size() == 1 && edges.get(0).getKeyWords().size() == 0) {
+                    log.warn("TRACE 2");
+                    nextId = edges.get(0).getTargetId();
+                    edges.get(0).setMatchWord(currentNode.getResultAnswer());
+                    continue;
                 }
+
+//                --------------- equals words
+
+                ArrayList<Edge> matchList = new ArrayList<>();
+                String result = currentNode.getResultAnswer().toLowerCase();
+                List sourceList = Arrays.asList(result.split(" "));
+
+                edges.forEach(edge -> {
+                    edge.getKeyWords().forEach(word -> {
+                        word = word.toLowerCase();
+                        if (sourceList.contains(word)) {
+                            edge.setMatchWord(word);
+                            matchList.add(edge);
+                        }
+                    });
+                });
+
+//                        -------------- choose next if
+                if (matchList.size() > 1) {
+                    matchList.forEach(rec -> log.info("---> Many matches! Edges " + rec));
+                    nextId = matchList.get(0).getTargetId();
+                } else if (matchList.size() == 0) {
+                    log.info("No match ------------------------> Again");
+                    Edge errorPath = getErrorPath(currentNode, builder.getEdgeMap());
+                    if (errorPath != null) {
+                        nextId = errorPath.getTargetId();
+                    } else {
+
+                        if (counterRepeat++ < 3) {
+                            nextId = currentNode.getId();
+                        } else {
+                            context.setEnd(true);
+                            SpeechAndHangup.errorRecognize(this);
+                        }
+                    }
+
+                } else {
+                    log.warn("TRACE 3");
+                    nextId = matchList.get(0).getTargetId();
+                }
+
+
+//                } else {
+//
+//                    currentNode.setContext(context);
+//                    nextId = currentNode.run();
+//                    if (nextId == null) {
+//                        log.info("Нет вариантов для перехода (next Node ID == null). Завершение звонка.");
+//                        break;
+//                    }
+//                    context = currentNode.getContext();
+//
+//                    sendMessage(currentNode, callerId);
+//
+//
+//                    if (!context.getCommands().empty()) {
+//                        Stack<Command> commands = context.getCommands();
+//                        while (!commands.empty()) {
+//                            Command command = commands.pop();
+//                            log.info("Команда: " + command.getApp());
+//                            log.info("Опции: " + command.getOption());
+//
+//                            if (currentNode instanceof Executable) {
+//                                System.out.println("DSFSDFSDF");
+//                            }
+//
+//                            exec(command.getApp(), command.getOption());
+//
+//                            String answer = getVariable("RECOG_INPUT(0)");
+//                            if (answer != null) {
+//                                context.setRecogResult(answer.toLowerCase());
+//                            } else {
+//                                context.setRecogResult("");
+//                            }
+//                            log.info("Результат распознавания: " + answer);
+//                        }
+//                    }
+//                }
             }
             context.setContextMap(new HashMap<>());
             hangup();
@@ -80,9 +189,23 @@ public class Incoming extends BaseAgiScript {
         }
     }
 
+    private Edge getErrorPath(Dialog node, Map<String, ArrayList<Edge>> map) {
+        ArrayList<Edge> edges = map.get(node.getId());
+        ArrayList<Edge> finded = new ArrayList<>();
+        edges.forEach(edge -> {
+            if (edge.getKeyWords().size() == 0) {
+                finded.add(edge);
+            }
+        });
+        if (finded.size() > 1) {
+            log.warn("Found more than 1 unmarked links from Node " + node.getId());
+        }
+        return finded.size() == 0 ? null : finded.get(0);
+    }
+
     private void sendMessage(Node currentNode, String callerId) {
         if (currentNode instanceof ActionNode) {
-                socket.sendServerMessage(context.getEvent().getSystemText());
+            socket.sendServerMessage(context.getEvent().getSystemText());
 //            sendSystemSay(callerId, currentNode.getId());
         }
         if (currentNode instanceof ClassifierNode) {
@@ -107,6 +230,8 @@ public class Incoming extends BaseAgiScript {
 
 //          sendCallEnd(callerId);
         }
+
+
     }
 
 //    private void sendCallStart(String callerId) {

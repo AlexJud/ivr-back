@@ -34,9 +34,9 @@ public class HttpHelper {
         return restTemplate.getForObject("http://redmine.indev:3000/", clazz);
     }
 
-    public <T> T postTest(String url, String data, Class<T> clazz) {
+    public <T> T postRedMine(String url, String data, Class<T> clazz) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic cGhvbmVVc2VyOjEyMzQ1Njc4");
+        headers.set("Authorization", "Basic cGhvbmVCb3Q6MTIzNDEyMzQ=");
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> request = new HttpEntity<>(data, headers);
         return restTemplate.postForObject(url, request, clazz);

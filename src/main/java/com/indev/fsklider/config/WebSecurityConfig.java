@@ -38,11 +38,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
         .and()
                 .headers()
-                    .contentSecurityPolicy("frame-src https://192.168.1.74:4200 https://192.168.1.74:8080/*; frame-ancestors https://192.168.1.74:4200*/")
+                    .contentSecurityPolicy("frame-src https://192.168.1.41:4200 https://192.168.1.41:8080/*; frame-ancestors https://192.168.1.41:4200*/")
                 .and()
 //                .frameOptions()
 //                .sameOrigin();
-                .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(new URI("https://192.168.1.74:4200"))));
+                .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(new URI("https://192.168.1.41:4200"))));
 //                .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(new URI("https://localhost:4200"))));
     }
     @Override

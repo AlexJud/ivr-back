@@ -1,5 +1,6 @@
 package com.indev.fsklider.utils;
 
+import com.indev.fsklider.models.Edge;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,6 +13,16 @@ import java.io.*;
 import java.util.*;
 
 public class Utils {
+
+    public static String replaceVar(String srcText, Map<String, Edge> map) {
+        while (srcText.indexOf('@') > -1 && srcText.indexOf('#') > -1) {
+            String var = srcText.substring(srcText.indexOf('@') + 1, srcText.indexOf('#'));
+            String answer = map.get(var) == null ? "" : map.get(var).getMatchWord();
+            srcText = srcText.substring(0, srcText.indexOf('@')) + answer + srcText.substring(srcText.indexOf('#') + 1);
+        }
+        return srcText;
+    }
+
     public static String getMessage(String regonizedXML) {
         String result = null;
         if (regonizedXML != null && !regonizedXML.equals("")) {
@@ -117,7 +128,7 @@ public class Utils {
 
         String[] nArr = numbers.split(" ");
         StringBuffer builder = new StringBuffer();
-        for ( String number : nArr) {
+        for (String number : nArr) {
             builder.append(mapNumbers.get(number));
         }
         return builder.toString();

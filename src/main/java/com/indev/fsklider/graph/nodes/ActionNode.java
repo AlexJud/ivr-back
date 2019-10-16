@@ -27,13 +27,15 @@ public class ActionNode extends Node {
     public String run() {
         log.info("Выполняется " + this.getClass().getSimpleName() + ": " + getId());
         String text = replaceVar(props.getSynthText());
-        if (getRepeatCount() == 3) {
+//        if (getRepeatCount() == 3) {
+        if (repeatCount == 3) {
             text = replaceVar("К сожалению, не удалось распознать ваш ответ. Звонок будет завершён.");
             hangup();
-            setRepeatCount(0);
+            repeatCount = 0;
         }
         synthesizeAndRecognize(text);
-        setRepeatCount(getRepeatCount() + 1);
+//        setRepeatCount(getRepeatCount() + 1);
+        repeatCount++;
         String nextId = calculateNext();
         log.info("Node: " + getId() + " - завершил выполнение");
         log.info("Содержимое контекста: " + Collections.singletonList(getContext()));
@@ -42,13 +44,13 @@ public class ActionNode extends Node {
     }
 
     private void synthesizeAndRecognize(String text) {
-        Stack<Command> commandList = getContext().getCommands();
-        Command command = new Command();
-        command.setApp("SynthAndRecog");
-        command.setOption(text + ", " +  props.getGrammar() + ", " + props.getOptions());
-        getContext().getEvent().setSystemText(Utils.removeBackslash(text));
-        commandList.push(command);
-        getContext().setCommands(commandList);
+//        Stack<Command> commandList = getContext().getCommands();
+//        Command command = new Command();
+//        command.setApp("SynthAndRecog");
+//        command.setOption(text + ", " +  props.getGrammar() + ", " + props.getOptions());
+//        getContext().getEvent().setSystemText(Utils.removeBackslash(text));
+//        commandList.push(command);
+//        getContext().setCommands(commandList);
     }
 
     private void hangup() {

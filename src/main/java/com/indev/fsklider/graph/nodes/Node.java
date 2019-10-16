@@ -3,6 +3,7 @@ package com.indev.fsklider.graph.nodes;
 import com.indev.fsklider.graph.context.Context;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +12,10 @@ import java.util.regex.Pattern;
 @Getter @Setter
 public abstract class Node{
     private String id;
-    private String jId;
-    private List<Relation> edgeList;
-    private Integer repeatCount = 0;
-    private Context context;
+    protected String jId;
+    protected List<Relation> edgeList;
+    protected Integer repeatCount = 0;
+    protected Context context;
 
     public abstract String run();
 

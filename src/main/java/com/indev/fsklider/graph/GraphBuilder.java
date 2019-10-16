@@ -3,78 +3,123 @@ package com.indev.fsklider.graph;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indev.fsklider.agiscripts.Incoming;
+import com.indev.fsklider.commands.SaveToRedMine;
+import com.indev.fsklider.commands.SpeechAndHangup;
+import com.indev.fsklider.commands.SpeechAndListenCommand;
+import com.indev.fsklider.dto.NodeDTO;
+import com.indev.fsklider.dto.converters.NodeDTOConverter;
 import com.indev.fsklider.graph.nodes.*;
 import com.indev.fsklider.graph.nodes.properties.ActionProps;
 import com.indev.fsklider.graph.nodes.properties.ExtractProps;
 import com.indev.fsklider.graph.nodes.properties.ValidateProps;
+import com.indev.fsklider.models.Dialog;
+import com.indev.fsklider.models.Edge;
+import lombok.Data;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
+@Data
 public class GraphBuilder {
     private String filename;
     private int i = 0;
+
+    private Map<String, ArrayList<Edge>> edgeMap = new HashMap<>();
+    private Map<String, Dialog> nodeMap = new HashMap<>();
+    private Map<String, Edge> variableMap = new HashMap<>();
 
     public GraphBuilder(String filename) {
         this.filename = filename;
     }
 
-    public static void main(String[] args) throws IOException {
-        GraphBuilder builder = new GraphBuilder(System.getProperty("user.dir"));
-        builder.getGraph();
-    }
+//    public static void main(String[] args) throws IOException {
+//        GraphBuilder builder = new GraphBuilder(System.getProperty("user.dir"));
+//        builder.getGraph();
+//    }
 
-    public Map<String, Node> getGraph() throws IOException {
-        HashMap<String, Node> graph = new HashMap<>();
+    public void getGraph() throws IOException {
+//        Map<String, Node> graph = new HashMap<>();
+//        Map<String, ArrayList<Edge>> edges = new HashMap<>();
+//        Map<String, String> variableMap = new HashMap<>();
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         String filepath = filename + "/src/main/resources" + "/graph_exec.json";
 //        String filepath = filename + "/src/main/resources" + "/graph.json";
         JsonNode rootNode = mapper.readValue(new FileInputStream(filepath), JsonNode.class);
         Iterator<JsonNode> iterator = rootNode.elements();
+
         while (iterator.hasNext()) {
             JsonNode node = iterator.next();
-//            System.out.println(node.get("type").textValue());
-            if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ActionNode) {
-                ActionNode objectNode = mapper.treeToValue(node, ActionNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SystemNode) {
-                SystemNode objectNode = mapper.treeToValue(node, SystemNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ClassifierNode) {
-                ClassifierNode objectNode = mapper.treeToValue(node, ClassifierNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ExtractNode) {
-                ExtractNode objectNode = mapper.treeToValue(node, ExtractNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ValidateNode) {
-                ValidateNode objectNode = mapper.treeToValue(node, ValidateNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SEND) {
-                SendNode objectNode = mapper.treeToValue(node, SendNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.EndNode) {
-                EndNode objectNode = mapper.treeToValue(node, EndNode.class);
-                graph.put(objectNode.getId(), objectNode);
-            } else if(NodeType.valueOf(node.get("type").textValue()) == NodeType.SpecifierNode) {
-                for (Node newNode : splitSpecifierNode(node)) {
-                    graph.put(newNode.getId(), newNode);
-                }
-            } else if(NodeType.valueOf(node.get("type").textValue()) == NodeType.BranchNode) {
-                for (Node newNode : splitBranchNode(node)) {
-                    graph.put(newNode.getId(), newNode);
-                }
+            String type = node.get("type").textValue();
+
+            NodeDTO dto = mapper.treeToValue(node, NodeDTO.class);
+            Dialog dialog = NodeDTOConverter.convertToDialog(dto);
+            nodeMap.put(dialog.getId(), dialog);
+            ArrayList<Edge> list = NodeDTOConverter.getEdges(dto, variableMap);
+            edgeMap.merge(dialog.getId(), list, (o, n) -> {
+                o.addAll(n);
+                return o;
+            });
+            
+            switch (type) {
+                case "BranchNode":
+                   dialog.getOperations().add(new SpeechAndListenCommand());
+                    break;
+                case "EndNode":
+                    dialog.getOperations().add(new SpeechAndHangup());
+                    break;
+                case "SystemNode":
+                    dialog.getOperations().add(new SaveToRedMine(dto.getProps().getOptions()));     // FIXME: 16.10.2019               
             }
+
+//            if (node.get("type").textValue().equals("BranchNode")) {
+//
+//                
+//
+//            } else if()
+
+//
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ActionNode) {
+//                ActionNode objectNode = mapper.treeToValue(node, ActionNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SystemNode) {
+//                SystemNode objectNode = mapper.treeToValue(node, SystemNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ClassifierNode) {
+//                ClassifierNode objectNode = mapper.treeToValue(node, ClassifierNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ExtractNode) {
+//                ExtractNode objectNode = mapper.treeToValue(node, ExtractNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.ValidateNode) {
+//                ValidateNode objectNode = mapper.treeToValue(node, ValidateNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SEND) {
+//                SendNode objectNode = mapper.treeToValue(node, SendNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.EndNode) {
+//                EndNode objectNode = mapper.treeToValue(node, EndNode.class);
+//                nodeMap.put(objectNode.getId(), objectNode);
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.SpecifierNode) {
+//                for (Node newNode : splitSpecifierNode(node)) {
+//                    nodeMap.put(newNode.getId(), newNode);
+//                }
+//            } else if (NodeType.valueOf(node.get("type").textValue()) == NodeType.BranchNode) {
+//                for (Node newNode : splitBranchNode(node)) {
+//                    graph.put(newNode.getId(), newNode);
+//                }
+//            }
         }
-        for (Map.Entry entry : graph.entrySet()) {
-            System.out.println(entry.getValue());
+        for (Map.Entry entry : nodeMap.entrySet()) {
+            System.out.println("GRAPH " + entry.getValue());
+
         }
-        return graph;
+
     }
+
 
     private ArrayList<Node> splitBranchNode(JsonNode node) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
@@ -108,7 +153,7 @@ public class GraphBuilder {
         boolean isDefaultExist = false;
         for (JsonNode edge : edgeList) {
             relation = mapper.treeToValue(edge, Relation.class);
-            if(relation.getMatch() == null || relation.getMatch().size() == 0) {
+            if (relation.getMatch() == null || relation.getMatch().size() == 0) {
                 isDefaultExist = true;
             }
             classifierEdges.add(relation);
@@ -123,7 +168,7 @@ public class GraphBuilder {
         return nodeList;
     }
 
-    private ArrayList<Node> splitSpecifierNode(JsonNode node) throws IOException{
+    private ArrayList<Node> splitSpecifierNode(JsonNode node) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ValidateNode validateNode = new ValidateNode();
         ActionNode actionNode = new ActionNode();
@@ -169,7 +214,7 @@ public class GraphBuilder {
         edgeList.add(extractEdge);
         extractNode.setEdgeList(edgeList);
 
-                //Setup Validate Node
+        //Setup Validate Node
         validateNode.setId(specifierId + "_" + "validator");
         validateNode.setJId(specifierId);
         ValidateProps validateProps = new ValidateProps();
@@ -184,7 +229,7 @@ public class GraphBuilder {
             if (relations.length == 0) {
                 relation.setId(specifierId);
                 validateNode.setEdgeIfEmpty(relation);
-            } else  {
+            } else {
                 for (JsonNode prop : node.get("edgeIfEmpty")) {
                     validateNode.setEdgeIfEmpty(mapper.treeToValue(prop, Relation.class));
                 }

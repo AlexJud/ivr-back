@@ -16,11 +16,12 @@ import java.util.Stack;
 @Getter @Setter
 public class Context {
     private HashMap<String, String> contextMap = new HashMap<>();
+
     private String recogResult;
     private DialogResult result = new DialogResult();
     private Stack<Command> commands = new Stack<>();
-    private String nextId;
-    private String previousId;
+    private String nextId; //
+        private String previousId;  //
     private ResponseEvent event = new ResponseEvent();
     private boolean isEnd;
     private String callerId;
