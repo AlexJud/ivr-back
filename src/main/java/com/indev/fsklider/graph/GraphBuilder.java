@@ -12,7 +12,7 @@ import com.indev.fsklider.dto.converters.NodeDTOConverter;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.models.Edge;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.ResourceUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,8 +24,6 @@ import java.util.Map;
 @Data
 public class GraphBuilder {
     private String filename;
-    @Value("${json.file.path}")
-    String path;
 //    private int i = 0;
 
     private Map<String, ArrayList<Edge>> edgeMap = new HashMap<>();
@@ -40,7 +38,8 @@ public class GraphBuilder {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String filepath = filename + path + "/graph_exec.json";
+        String filepath = ResourceUtils.getFile("classpath:graph_exec.json").getAbsolutePath();
+//        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
 //        String filepath = filename + "/src/main/resources" + "/graph.json";
         JsonNode rootNode = mapper.readValue(new FileInputStream(filepath), JsonNode.class);
         Iterator<JsonNode> iterator = rootNode.elements();
