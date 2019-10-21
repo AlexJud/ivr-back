@@ -38,7 +38,7 @@ public class GraphBuilder {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String filepath = ResourceUtils.getFile("classpath:graph_exec.json").getAbsolutePath();
+        String filepath = ResourceUtils.getFile("classpath:graph_exec.json").getPath();
 //        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
 //        String filepath = filename + "/src/main/resources" + "/graph.json";
         JsonNode rootNode = mapper.readValue(new FileInputStream(filepath), JsonNode.class);
