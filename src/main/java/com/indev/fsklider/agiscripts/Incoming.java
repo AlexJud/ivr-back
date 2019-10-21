@@ -63,9 +63,9 @@ public class Incoming extends BaseAgiScript {
             context.setEnd(false);
             String nextId = "root";
 
-
+            int counterRepeat = 1;
             while (!context.isEnd()) {
-                int counterRepeat = 1;
+
 
                 currentNode = builder.getNodeMap().get(nextId);
                 socket.sendHighlightMessage(currentNode.getId());

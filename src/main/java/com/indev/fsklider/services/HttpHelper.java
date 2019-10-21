@@ -30,10 +30,6 @@ public class HttpHelper {
         ResponseEvent dialogResult = restTemplate.postForObject("http://192.168.1.74:8080/event", request, ResponseEvent.class);
     }
 
-    public <T> T getTest(String url, Class<T> clazz) {
-        return restTemplate.getForObject("http://redmine.indev:3000/", clazz);
-    }
-
     public <T> T postRedMine(String url, String data, Class<T> clazz) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Basic cGhvbmVCb3Q6MTIzNDEyMzQ=");

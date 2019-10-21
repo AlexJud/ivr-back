@@ -11,10 +11,4 @@ public class NodeDTO {
     private PropertiesNode props;
     private ArrayList<EdgeList> edgeList;
 
-//    public NodeDTO(String id) {
-//        this.id = id;
-//        PropertiesNode props = new PropertiesNode();
-//
-//    }
-
 }

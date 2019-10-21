@@ -1,10 +1,15 @@
 package com.indev.fsklider.dto.converters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indev.fsklider.commands.SaveToRedMine;
 import com.indev.fsklider.commands.SpeechAndHangup;
 import com.indev.fsklider.commands.SpeechAndListenCommand;
 import com.indev.fsklider.dto.NodeDTO;
+import com.indev.fsklider.graph.nodes.Executable;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.models.Edge;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,12 +24,9 @@ public class NodeDTOConverter {
         dialog.setAsrOptions(nodeDTO.getProps().getAsrOptions());
         dialog.setGrammar(nodeDTO.getProps().getGrammar());
         dialog.setType(nodeDTO.getType());
+
 //        -------------------- set Commands
-//        if (nodeDTO.getEdgeList().size() == 0) {
-//            dialog.getOperations().add(new SpeechAndHangup());
-//        } else {
-//            dialog.getOperations().add(new SpeechAndListenCommand());
-//        }
+
 //        --------------------- end set
 
         return dialog;
@@ -56,4 +58,6 @@ public class NodeDTOConverter {
         });
         return list;
     }
+
+
 }
