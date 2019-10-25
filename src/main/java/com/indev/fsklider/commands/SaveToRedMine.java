@@ -31,7 +31,7 @@ public class SaveToRedMine implements Executable {
         try {
             String send = mapper.writeValueAsString(issueBox);
             System.out.println("JSON " + send);
-            System.out.println("REDMINE" + httpHelper.postRedMine("http://redmine.indev/issues.json", send, String.class));
+            System.out.println("REDMINE" + httpHelper.postRedMine("https://redmine.indev.studio/issues.json", send, String.class));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
