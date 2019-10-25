@@ -15,6 +15,7 @@ import lombok.Data;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,12 +38,12 @@ public class GraphBuilder {
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
+//        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
 
-//        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-//        InputStream stream = classloader.getResourceAsStream("graph_exec.json");
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream stream = classloader.getResourceAsStream("graph_exec.json");
 
-        JsonNode rootNode = mapper.readValue(new FileInputStream(filepath), JsonNode.class);
+        JsonNode rootNode = mapper.readValue(stream, JsonNode.class);
         Iterator<JsonNode> iterator = rootNode.elements();
 
         while (iterator.hasNext()) {
