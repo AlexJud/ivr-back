@@ -2,10 +2,7 @@ package com.indev.fsklider.commands.options;
 
 import org.springframework.context.annotation.Configuration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 public class MRCPFactory {
@@ -35,8 +32,10 @@ public class MRCPFactory {
     private MRCPFactory() {
         Properties properties = new Properties();
         try {
-
-            properties.load(new FileReader(System.getProperty("user.dir") + "/src/main/resources/application.properties"));
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream stream = classloader.getResourceAsStream("application.properties");
+            properties.load(stream);
+//            properties.load(new FileReader(System.getProperty("user.dir") + "/src/main/resources/application.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
