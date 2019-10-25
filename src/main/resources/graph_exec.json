@@ -1,1 +1,175 @@
-[{"id":"root","type":"BranchNode","props":{"synthText":"Как дела?","grammar":"http://localhost/theme:graph","asrOptions":"","command":"","options":""},"edgeList":[]}]
+[
+  {
+    "id": "root",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "Здраствуйте, Вы позвонили в компанию Интеллектуальная Разработка. Вы хотите оставить заявку на решение вашей задачи или прослушать информацию о компании?",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node0",
+        "match": [
+          "оставить",
+          "заявку",
+          "заявка",
+          "оставил",
+          "сообщение"
+        ]
+      },
+      {
+        "id": "Node5",
+        "match": [
+          "информация",
+          "информацию",
+          "компанию",
+          "компания",
+          "компании"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Node0",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "Назовите ваше Имя",
+      "grammar": "/etc/asterisk/grammars/new2.xml",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node1",
+        "match": [],
+        "name": "name"
+      }
+    ]
+  },
+  {
+    "id": "Node1",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "Назовите контактный телефон",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node2",
+        "match": [],
+        "name": "phone"
+      }
+    ]
+  },
+  {
+    "id": "Node2",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "Назовите адрес электронной почты",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node3",
+        "match": [],
+        "name": "email"
+      }
+    ]
+  },
+  {
+    "id": "Node3",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "Опишите Вашу задачу",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node10",
+        "match": [],
+        "name": "task"
+      }
+    ]
+  },
+  {
+    "id": "Node10",
+    "type": "SystemNode",
+    "props": {
+      "synthText": "",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "redmine",
+      "options": "Привет Максим, сегодня поступил звонок от клиента: @name#, его телефон: @phone#, почта: @email#. Он хочет @task#"
+    },
+    "edgeList": [
+      {
+        "id": "Node4",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node4",
+    "type": "EndNode",
+    "props": {
+      "synthText": "Спасибо за обращение, мы обязательно свяжемся с Вами. Хорошего дня!",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": []
+  },
+  {
+    "id": "Node5",
+    "type": "BranchNode",
+    "props": {
+      "synthText": " Компания Интеллектуальная Разработка это команда разработчиков, алгоритмистов и исследователей с опытом создания распределенных автоматизированных систем высокой доступности с возможностями интеллектуальной обработки. Мы предлагаем решение задач по автоматизации, разработку распределенных информационных систем, разработку мобильных приложений под операционные системы Айос и Android. Владеем широким спектром технологий, включающих платформы Джава, .NET Framework, spring, Angular, разрабатываем на языках Java, С#, Scala, Python, Джаваскрипт, Тайпскрипт. Хотите оставить заявку на решение вашей задачи?",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node0",
+        "match": [
+          "заявка",
+          "заявку",
+          "оставить",
+          "хочу",
+          "хотел"
+        ]
+      },
+      {
+        "id": "Node7",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node7",
+    "type": "EndNode",
+    "props": {
+      "synthText": "Спасибо за обращение. Хорошего дня!",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": []
+  }
+]
