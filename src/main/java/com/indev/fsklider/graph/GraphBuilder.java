@@ -12,16 +12,18 @@ import com.indev.fsklider.dto.converters.NodeDTOConverter;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.models.Edge;
 import lombok.Data;
+import lombok.extern.log4j.Log4j;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 @Data
+@Log4j
 public class GraphBuilder {
     private String filename;
 //    private int i = 0;
@@ -39,11 +41,19 @@ public class GraphBuilder {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 //        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
+        InputStream stream;
+        File json = new File("graph.json");
+        if (Files.exists(json.toPath())){
+            stream = new FileInputStream(json);
+        } else {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            stream = classloader.getResourceAsStream("graph_exec.json");
+        }
 
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream stream = classloader.getResourceAsStream("graph_exec.json");
 
         JsonNode rootNode = mapper.readValue(stream, JsonNode.class);
+
+//        JsonNode rootNode = mapper.readValue(new FileReader(filepath), JsonNode.class);
         Iterator<JsonNode> iterator = rootNode.elements();
 
         while (iterator.hasNext()) {

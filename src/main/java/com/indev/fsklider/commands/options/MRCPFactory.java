@@ -1,10 +1,11 @@
 package com.indev.fsklider.commands.options;
 
+import lombok.extern.log4j.Log4j;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.*;
 import java.util.Properties;
-
+@Log4j
 public class MRCPFactory {
     private static MRCPCommands mrcpCommands;
     private static MRCPFactory instanse;
@@ -32,6 +33,8 @@ public class MRCPFactory {
     private MRCPFactory() {
         Properties properties = new Properties();
         try {
+
+//            System.out.println("FACTORY IS IN: - "+ System.getProperty("java.class.path"));
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream stream = classloader.getResourceAsStream("application.properties");
             properties.load(stream);
@@ -40,7 +43,7 @@ public class MRCPFactory {
             e.printStackTrace();
         }
         String value = properties.getProperty("mrcp.connection");
-        System.out.println("VALUE CONECTNIO " + value);
+        log.info("MRCP protocol - connection to: " + value);
         if (value == null ){
             value = "vn";
         }

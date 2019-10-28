@@ -31,7 +31,7 @@ public class SpeechAndListenCommand implements Executable {
                 asterisk.getSocket().sendServerMessage(textWithVars);
                 asterisk.exec(commands.speakAndListen(), textWithVars, options);
                 String answer = asterisk.getVariable("RECOG_INPUT(0)");
-                log.info("Listener sad: " + answer);
+                log.info("Listener said: " + answer);
 
                 while (answer == null) {
                     asterisk.exec(commands.speakAndListen(), "Говорите быстрее и короче. У Вас всего 5 секунд на ответ", options);

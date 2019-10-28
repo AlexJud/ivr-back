@@ -83,7 +83,6 @@ public class Incoming extends BaseAgiScript {
                 }
 
 //                    --------------  start to choose next node
-
                 ArrayList<Edge> edges = builder.getEdgeMap().get(currentNode.getId());
 
 //                       ------------------------------ temp
@@ -94,14 +93,14 @@ public class Incoming extends BaseAgiScript {
 //                        --------------------------------temp
 //                }
                 if (edges.size() == 1 && edges.get(0).getKeyWords().size() == 0) {
-                    log.warn("TRACE 2");
+                    log.warn("Переход по единственной безусловной связи");
                     nextId = edges.get(0).getTargetId();
                     edges.get(0).setMatchWord(currentNode.getResultAnswer());
                     continue;
                 }
 
 //                --------------- equals words
-
+                log.info("choose next Edge ->");
                 ArrayList<Edge> matchList = new ArrayList<>();
                 String result = currentNode.getResultAnswer().toLowerCase();
                 List sourceList = Arrays.asList(result.split(" "));
@@ -124,19 +123,22 @@ public class Incoming extends BaseAgiScript {
                     log.info("No match ------------------------> Again");
                     Edge errorPath = getErrorPath(currentNode, builder.getEdgeMap());
                     if (errorPath != null) {
+                        log.info("Переход по связи 'Ошибка'");
                         nextId = errorPath.getTargetId();
                     } else {
 
                         if (counterRepeat++ < 3) {
+                            log.info("Повторение текущего диалога");
                             nextId = currentNode.getId();
                         } else {
                             context.setEnd(true);
+                            log.info("Ответ не распознан 3 раза, вешаю трубку");
                             SpeechAndHangup.errorRecognize(this);
                         }
                     }
 
                 } else {
-                    log.warn("TRACE 3");
+                    log.warn("Переход по распознанной связи");
                     nextId = matchList.get(0).getTargetId();
                 }
 
