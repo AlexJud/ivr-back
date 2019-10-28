@@ -111,7 +111,7 @@
       "synthText": "",
       "grammar": "builtin:speech/transcribe,b=0&spl=ru-RU&f=beep&p=uni2",
       "asrOptions": "",
-      "command": "redmine",
+      "command": "SaveToRedMine",
       "options": "Привет Максим, сегодня поступил звонок от клиента: @name#, его телефон: @phone#, почта: @email#. Он хочет @task#"
     },
     "edgeList": [
