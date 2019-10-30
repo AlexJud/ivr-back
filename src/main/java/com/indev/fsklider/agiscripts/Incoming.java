@@ -65,19 +65,17 @@ public class Incoming extends BaseAgiScript {
 
             int counterRepeat = 1;
             while (!context.isEnd()) {
-
+                log.info("STATUS CHANNEL "+ channel.getChannelStatus());
 
                 currentNode = builder.getNodeMap().get(nextId);
                 socket.sendHighlightMessage(currentNode.getId());
-
-//                if (currentNode instanceof Dialog) {
 
 
 //                 ---------------   execute node processes -> ACTION
                 log.info("TRACE Executable class" + currentNode);
                 currentNode.run(this);
 
-                if (hangup){
+                if (hangup) {
                     context.setEnd(true);
                     break;
                 }
@@ -127,7 +125,7 @@ public class Incoming extends BaseAgiScript {
                         nextId = errorPath.getTargetId();
                     } else {
 
-                        if (counterRepeat++ < 3) {
+                        if (counterRepeat < 3) {
                             log.info("Повторение текущего диалога");
                             nextId = currentNode.getId();
                         } else {
@@ -142,43 +140,7 @@ public class Incoming extends BaseAgiScript {
                     nextId = matchList.get(0).getTargetId();
                 }
 
-
-//                } else {
-//
-//                    currentNode.setContext(context);
-//                    nextId = currentNode.run();
-//                    if (nextId == null) {
-//                        log.info("Нет вариантов для перехода (next Node ID == null). Завершение звонка.");
-//                        break;
-//                    }
-//                    context = currentNode.getContext();
-//
-//                    sendMessage(currentNode, callerId);
-//
-//
-//                    if (!context.getCommands().empty()) {
-//                        Stack<Command> commands = context.getCommands();
-//                        while (!commands.empty()) {
-//                            Command command = commands.pop();
-//                            log.info("Команда: " + command.getApp());
-//                            log.info("Опции: " + command.getOption());
-//
-//                            if (currentNode instanceof Executable) {
-//                                System.out.println("DSFSDFSDF");
-//                            }
-//
-//                            exec(command.getApp(), command.getOption());
-//
-//                            String answer = getVariable("RECOG_INPUT(0)");
-//                            if (answer != null) {
-//                                context.setRecogResult(answer.toLowerCase());
-//                            } else {
-//                                context.setRecogResult("");
-//                            }
-//                            log.info("Результат распознавания: " + answer);
-//                        }
-//                    }
-//                }
+                counterRepeat = nextId.equals(currentNode.getId()) ? ++counterRepeat : 1;
             }
             context.setContextMap(new HashMap<>());
             hangup();
@@ -206,80 +168,32 @@ public class Incoming extends BaseAgiScript {
         return finded.size() == 0 ? null : finded.get(0);
     }
 
-    private void sendMessage(Node currentNode, String callerId) {
-        if (currentNode instanceof ActionNode) {
-            socket.sendServerMessage(context.getEvent().getSystemText());
-//            sendSystemSay(callerId, currentNode.getId());
-        }
-        if (currentNode instanceof ClassifierNode) {
-            socket.sendSystemMessage("Выбрана ветка со словом " + context.getContextMap().get("reason"));
-        }
-        if (currentNode instanceof ExtractNode) {
-            String varName = ((ExtractNode) currentNode).getProps().getVarName();
-            String rawVarName = ((ExtractNode) currentNode).getProps().getRawVarName();
-            String value = context.getContextMap().get(varName);
-            String rawValue = context.getContextMap().get(rawVarName);
-            if (value == null && rawValue == null) {
-                socket.sendSystemMessage(varName + " = " + "Нет совпадений. Повтор.");
-            } else if (value != null) {
-                socket.sendSystemMessage("Сохранено " + varName + " = " + context.getContextMap().get(varName));
-            } else {
-                socket.sendSystemMessage("Сохранено " + rawVarName + " = " + context.getContextMap().get(rawVarName));
-            }
-            socket.sendUserMessage(callerId, currentNode.getContext().getRecogResult());
-//            sendAbonentSay(callerId);
-        } else if (currentNode instanceof EndNode) {
-            socket.sendServerMessage(context.getEvent().getSystemText());
-
-//          sendCallEnd(callerId);
-        }
-
-
-    }
-
-//    private void sendCallStart(String callerId) {
-//        ResponseEvent event = new ResponseEvent();
-//        event.setTimestamp(new Date().getTime());
-//        event.setType(EventType.CALL_START);
-//        event.setCallId(callerId);
-//        http.doPost(event);
-//    }
+//    private void sendMessage(Node currentNode, String callerId) {
+//        if (currentNode instanceof ActionNode) {
+//            socket.sendServerMessage(context.getEvent().getSystemText());
+//        }
+//        if (currentNode instanceof ClassifierNode) {
+//            socket.sendSystemMessage("Выбрана ветка со словом " + context.getContextMap().get("reason"));
+//        }
+//        if (currentNode instanceof ExtractNode) {
+//            String varName = ((ExtractNode) currentNode).getProps().getVarName();
+//            String rawVarName = ((ExtractNode) currentNode).getProps().getRawVarName();
+//            String value = context.getContextMap().get(varName);
+//            String rawValue = context.getContextMap().get(rawVarName);
+//            if (value == null && rawValue == null) {
+//                socket.sendSystemMessage(varName + " = " + "Нет совпадений. Повтор.");
+//            } else if (value != null) {
+//                socket.sendSystemMessage("Сохранено " + varName + " = " + context.getContextMap().get(varName));
+//            } else {
+//                socket.sendSystemMessage("Сохранено " + rawVarName + " = " + context.getContextMap().get(rawVarName));
+//            }
+//            socket.sendUserMessage(callerId, currentNode.getContext().getRecogResult());
+//        } else if (currentNode instanceof EndNode) {
+//            socket.sendServerMessage(context.getEvent().getSystemText());
 //
-//    private void sendSystemMessage(String callerId) {
-//        ResponseEvent event = new ResponseEvent();
-//        event.setTimestamp(new Date().getTime());
-//        event.setType(EventType.CALL_START);
-//        event.setCallId(callerId);
-//        http.doPost(event);
-//    }
+//        }
 //
-//    private void sendSystemSay(String callerId, String nodeId) throws AgiException {
-//        ResponseEvent event = context.getEvent();
-//        event.setDecision(nodeId);
-//        event.setTimestamp(new Date().getTime());
-//        event.setType(EventType.SYSTEM_SAY);
-//        event.setCallId(callerId);
-//        event.setTokenList(context.getContextMap());
-//        http.doPost(event);
-//    }
 //
-//    private void sendAbonentSay(String callerId) throws AgiException {
-//        ResponseEvent event = context.getEvent();
-//        event.setTimestamp(new Date().getTime());
-//        event.setType(EventType.ABONENT_SAY);
-//        event.setTokenList(context.getContextMap());
-//        event.setCallId(callerId);
-//        String recog_result = getVariable("RECOG_INPUT(0)");
-////        String recog_result = Utils.getMessage(getVariable("RECOG_INPUT(0)"));
-//        event.setAbonentText(recog_result);
-//        http.doPost(event);
 //    }
-//
-//    private void sendCallEnd(String callerId) {
-//        ResponseEvent event = context.getEvent();
-//        event.setTimestamp(new Date().getTime());
-//        event.setType(EventType.CALL_END);
-//        event.setCallId(callerId);
-//        http.doPost(event);
-//    }
+
 }

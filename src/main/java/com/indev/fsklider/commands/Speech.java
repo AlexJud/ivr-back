@@ -36,4 +36,9 @@ public class Speech implements Executable {
         log.warn("Text for synthesis is not specified");
         return false;
     }
+
+    @Override
+    public void setOptions(String options) {
+
+    }
 }

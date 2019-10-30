@@ -1,20 +1,25 @@
 package com.indev.fsklider.controllers;
 
+import com.indev.fsklider.commands.system.SaveToRedMine;
+import com.indev.fsklider.dto.CommandDTO;
 import com.indev.fsklider.dto.NodeDTO;
+import com.indev.fsklider.graph.nodes.Executable;
 import lombok.extern.log4j.Log4j;
+import org.reflections.Reflections;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
@@ -25,18 +30,18 @@ public class Model {
 
     @CrossOrigin
     @PostMapping("/api/json")
-    public ResponseEntity<String> setModel(@RequestBody String model, @RequestParam  String fileName, @RequestParam Boolean call) {
+    public ResponseEntity<String> setModel(@RequestBody String model, @RequestParam String fileName, @RequestParam Boolean call) {
 //        System.out.println(model);
         try {
-            if (call){
-                Files.write(Paths.get(System.getProperty("user.dir") + "/src/main/resources/graph_exec.json" ), model.getBytes());
+            if (call) {
+                Files.write(Paths.get(System.getProperty("user.dir") + "/src/main/resources/graph_exec.json"), model.getBytes());
             } else {
                 Files.write(Paths.get(DIR + fileName), model.getBytes());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok().build();
     }
 
     @CrossOrigin
@@ -48,6 +53,25 @@ public class Model {
             list.add(file.getName());
         }
         return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/api/commands")
+    public List getCommands() {
+        Reflections reflections = new Reflections("com.indev.fsklider.commands.system");
+        Set<Class<? extends Executable>> subTypesOf = reflections.getSubTypesOf(Executable.class);
+       return subTypesOf.stream()
+               .map(aClass -> {
+                   try {
+                       Executable instance = aClass.getConstructor().newInstance();
+                       return new CommandDTO(aClass.getSimpleName(),instance.getDescription());
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                       log.warn("Не удалось создать класс системной команды. У класса должен быть пустой конструктор "+ aClass.getName());
+                    }
+                   return "error";
+               })
+               .collect(Collectors.toList());
+
     }
 
     @CrossOrigin
