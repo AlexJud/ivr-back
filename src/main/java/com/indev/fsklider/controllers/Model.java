@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +41,9 @@ public class Model {
     @CrossOrigin
     @GetMapping(value = "/api/models", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity getModels() {
+        log.debug("DIRECTORY " + DIR);
         File[] files = new File(DIR).listFiles();
+        log.debug("FILES " + Arrays.toString(files));
         List list = new ArrayList(files.length);
         for (File file : files) {
             list.add(file.getName());
