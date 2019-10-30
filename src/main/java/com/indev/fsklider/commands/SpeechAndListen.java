@@ -12,12 +12,12 @@ import org.asteriskjava.fastagi.AgiException;
 
 @Log4j
 @NoArgsConstructor
-public class SpeechAndListenCommand implements Executable {
+public class SpeechAndListen implements Executable {
 
     private MRCPCommands commands = MRCPFactory.instance().commands();
     private String options = commands.options();
 
-    public SpeechAndListenCommand(String grammar) {
+    public SpeechAndListen(String grammar) {
         this.options = grammar;
     }
 
@@ -59,7 +59,12 @@ public class SpeechAndListenCommand implements Executable {
     }
 
     @Override
+    public void setOptions(String options) {
+
+    }
+
+    @Override
     public String toString() {
-        return "SpeechAndListenCommand, Options:" + options;
+        return "SpeechAndListen, Options:" + options;
     }
 }

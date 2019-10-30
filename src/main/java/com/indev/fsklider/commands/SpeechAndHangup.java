@@ -36,6 +36,11 @@ public class SpeechAndHangup implements Executable {
         return false;
     }
 
+    @Override
+    public void setOptions(String options) {
+
+    }
+
     public static boolean errorRecognize(Incoming asterisk) {
         try {
 //            asterisk.exec(COMMAND_SYNTH, "К сожалению не удалось распознать ваш ответ. Звонок будет завершён.", OPTIONS);
