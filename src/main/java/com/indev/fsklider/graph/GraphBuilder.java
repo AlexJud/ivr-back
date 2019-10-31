@@ -44,8 +44,8 @@ public class GraphBuilder {
         if (Files.exists(json.toPath())){
             stream = new FileInputStream(json);
         } else {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            stream = classloader.getResourceAsStream("graph_exec.json");
+            log.error("Не найдет файла сценария, graph.json");
+            stream = null; // FIXME: 31.10.2019 
         }
 
 
@@ -113,5 +113,19 @@ public class GraphBuilder {
         this.nodeMap.forEach((k, v) -> System.out.println("-----------NODE " + k + "   value" + v.getOperations()));
 
     }
+
+//    public static void main(String[] args) {
+//        File f = new File("scenario");
+//        System.out.println("EXIST "+ Files.exists(f.toPath()));
+//        System.out.println("EXIST "+ f.toPath().toAbsolutePath().toString());
+//        if (!Files.exists(f.toPath())){
+//            try {
+//                Files.createDirectory(f.toPath());
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//    }
 
 }
