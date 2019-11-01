@@ -15,11 +15,11 @@ import org.asteriskjava.fastagi.AgiException;
 public class SpeechAndListen implements Executable {
 
     private MRCPCommands commands = MRCPFactory.instance().commands();
-    private String options = commands.options();
+//    private String options = commands.options();
 
-    public SpeechAndListen(String grammar) {
-        this.options = grammar;
-    }
+//    public SpeechAndListen(String grammar) {
+//        this.options = grammar;
+//    }
 
     @Override
     public boolean execute(Incoming asterisk, Dialog node) {
@@ -29,12 +29,12 @@ public class SpeechAndListen implements Executable {
                 String textWithVars = Utils.replaceVar(node.getSynthText(), asterisk.getBuilder().getVariableMap());
 
                 asterisk.getSocket().sendServerMessage(textWithVars);
-                asterisk.exec(commands.speakAndListen(), textWithVars, options);
+                asterisk.exec(commands.speakAndListen(), textWithVars, node.getGrammar() + ", "+node.getAsrOptions());
                 String answer = asterisk.getVariable("RECOG_INPUT(0)");
                 log.info("Listener said: " + answer);
 
                 while (answer == null) {
-                    asterisk.exec(commands.speakAndListen(), "Говорите быстрее и короче. У Вас всего 5 секунд на ответ", options);
+                    asterisk.exec(commands.speakAndListen(), "Говорите быстрее и короче. У Вас всего 5 секунд на ответ", node.getGrammar() + ", "+node.getAsrOptions());
                     answer = asterisk.getVariable("RECOG_INPUT(0)");
                     if (repeat-- == 0) {
                         answer = "";
@@ -63,8 +63,8 @@ public class SpeechAndListen implements Executable {
 
     }
 
-    @Override
-    public String toString() {
-        return "SpeechAndListen, Options:" + options;
-    }
+//    @Override
+//    public String toString() {
+//        return "SpeechAndListen, Options:" + options;
+//    }
 }

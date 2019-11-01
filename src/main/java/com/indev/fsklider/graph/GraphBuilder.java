@@ -71,7 +71,7 @@ public class GraphBuilder {
 //           --------------------- add Commands
             if (dto.getProps().getSynthText().length() > 0) {
                 if (dto.getEdgeList().size() > 0 && (dto.getProps().getOptions().equals("") || dto.getType().equals("BranchNode"))) {
-                    dialog.getOperations().add(new SpeechAndListen(dialog.getGrammar() + ", " + dialog.getAsrOptions()));
+                    dialog.getOperations().add(new SpeechAndListen());
                 } else if (dto.getEdgeList().size() > 0) {
                     dialog.getOperations().add(new Speech());
                 }

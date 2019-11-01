@@ -22,7 +22,7 @@ public class SpeechAndHangup implements Executable {
                 String textWithVars = Utils.replaceVar(node.getSynthText(), asterisk.getBuilder().getVariableMap());
 
                 asterisk.getSocket().sendServerMessage(textWithVars);
-                asterisk.exec(commands.speak(), textWithVars, commands.options());
+                asterisk.exec(commands.speak(), textWithVars, node.getGrammar() + ", "+node.getAsrOptions());
                 asterisk.exec(commands.hangUp());
                 asterisk.setHangup(true);
             } catch (AgiException e) {
@@ -44,7 +44,7 @@ public class SpeechAndHangup implements Executable {
     public static boolean errorRecognize(Incoming asterisk) {
         try {
 //            asterisk.exec(COMMAND_SYNTH, "К сожалению не удалось распознать ваш ответ. Звонок будет завершён.", OPTIONS);
-            asterisk.exec(MRCPFactory.instance().commands().speak(), "К сожалению не удалось распознать ваш ответ. Звонок будет завершён.", MRCPFactory.instance().commands().options());
+            asterisk.exec(MRCPFactory.instance().commands().speak(), "К сожалению не удалось распознать ваш ответ. Звонок будет завершён.", MRCPFactory.instance().commands().customOptions());
             asterisk.exec(MRCPFactory.instance().commands().hangUp());
         } catch (AgiException e) {
             e.printStackTrace();

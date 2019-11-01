@@ -1,5 +1,6 @@
 package com.indev.fsklider.dto.converters;
 
+import com.indev.fsklider.commands.options.MRCPFactory;
 import com.indev.fsklider.dto.NodeDTO;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.models.Edge;
@@ -14,7 +15,8 @@ public class NodeDTOConverter {
         dialog.setSynthText(nodeDTO.getProps().getSynthText().replaceAll(",","."));
         dialog.setId(nodeDTO.getId());
         dialog.setAsrOptions(nodeDTO.getProps().getAsrOptions());
-        dialog.setGrammar(nodeDTO.getProps().getGrammar());
+//        dialog.setGrammar(nodeDTO.getProps().getGrammar());
+        dialog.setGrammar(MRCPFactory.instance().commands().grammar());
         dialog.setType(nodeDTO.getType());
 
 //        -------------------- set Commands

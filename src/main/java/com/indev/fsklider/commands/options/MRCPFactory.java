@@ -15,7 +15,7 @@ public class MRCPFactory {
             mrcpCommands = new MRCPCommandsVoiceNavigator();
         }
         if (connection.equalsIgnoreCase("google")){
-            mrcpCommands = new MRCPCommandsVoiceNavigator();
+            mrcpCommands = new MRCPCommandsGoogle();
         }
     }
 

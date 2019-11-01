@@ -25,7 +25,7 @@ public class Speech implements Executable {
                 String textWithVars = Utils.replaceVar(node.getSynthText(), asterisk.getBuilder().getVariableMap());
 
                 asterisk.getSocket().sendServerMessage(textWithVars);
-                asterisk.exec(commands.speak(), textWithVars, commands.options());
+                asterisk.exec(commands.speak(), textWithVars, node.getGrammar() + ", "+node.getAsrOptions());
             } catch (AgiException e) {
                 e.printStackTrace();
                 return false;
