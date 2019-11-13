@@ -1,7 +1,10 @@
 package com.indev.fsklider.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.graph.Graph;
+import com.indev.fsklider.agiscripts.HangUpException;
 import com.indev.fsklider.agiscripts.Incoming;
+import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.nodes.Executable;
 import com.indev.fsklider.graph.nodes.Node;
 import com.indev.fsklider.graph.nodes.properties.ActionProps;
@@ -23,10 +26,11 @@ public class Dialog {
     private String options;
     private String resultAnswer;
 
-    public boolean run(Incoming asterisk) {
+    public boolean run(Incoming asterisk, GraphBuilder graph) throws HangUpException {
         boolean result = true;
         for (Executable operation : this.operations) {
-            if (!operation.execute(asterisk, this)) {
+            boolean execute = operation.execute(asterisk, this, graph);
+            if (!execute) {
                 log.warn("Ошибка выполнения команды: " + operations.toString());
                 result = false;
             }

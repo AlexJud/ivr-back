@@ -1,0 +1,151 @@
+[
+  {
+    "id": "root",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "Как дела?",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node0",
+        "match": [
+          "да"
+        ]
+      },
+      {
+        "id": "Node1",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node0",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 1",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node2",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node1",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 2",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node5",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node2",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 1. второй блок",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node3",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node3",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 1. третий блок",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node4",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node4",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 1. последний блок",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": []
+  },
+  {
+    "id": "Node5",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 2. второй блок",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node7",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node7",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 2.третий блок",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": [
+      {
+        "id": "Node8",
+        "match": []
+      }
+    ]
+  },
+  {
+    "id": "Node8",
+    "type": "BranchNode",
+    "props": {
+      "synthText": "ветка 2. четвертый блок",
+      "grammar": "http://localhost/theme:graph",
+      "asrOptions": "t=5000&b=0&nit=5000",
+      "command": "",
+      "options": ""
+    },
+    "edgeList": []
+  }
+]

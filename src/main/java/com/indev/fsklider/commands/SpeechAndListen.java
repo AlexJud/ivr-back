@@ -1,8 +1,10 @@
 package com.indev.fsklider.commands;
 
 import com.indev.fsklider.agiscripts.Incoming;
+import com.indev.fsklider.beans.socket.MessageType;
 import com.indev.fsklider.commands.options.MRCPCommands;
 import com.indev.fsklider.commands.options.MRCPFactory;
+import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.nodes.Executable;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.utils.Utils;
@@ -22,13 +24,14 @@ public class SpeechAndListen implements Executable {
 //    }
 
     @Override
-    public boolean execute(Incoming asterisk, Dialog node) {
+    public boolean execute(Incoming asterisk, Dialog node, GraphBuilder graph) {
         if (!node.getSynthText().isEmpty()) {
             try {
                 int repeat = 2;
-                String textWithVars = Utils.replaceVar(node.getSynthText(), asterisk.getBuilder().getVariableMap());
+                String textWithVars = Utils.replaceVar(node.getSynthText(), graph.getVariableMap());
 
-                asterisk.getSocket().sendServerMessage(textWithVars);
+//                asterisk.getSocket().sendServerMessage(textWithVars);
+                asterisk.getSocket().sendMessage(textWithVars,MessageType.SERVER,asterisk.getVariable("EXTEN"));
                 asterisk.exec(commands.speakAndListen(), textWithVars, node.getGrammar() + ", "+node.getAsrOptions());
                 String answer = asterisk.getVariable("RECOG_INPUT(0)");
                 log.info("Listener said: " + answer);
@@ -45,7 +48,8 @@ public class SpeechAndListen implements Executable {
                     answer = "";
                 }
                 node.setResultAnswer(answer);
-                asterisk.getSocket().sendUserMessage(asterisk.getVariable("CALLERID(ANI)"), node.getResultAnswer());
+//                asterisk.getSocket().sendUserMessage(asterisk.getVariable("CALLERID(ANI)"), node.getResultAnswer());
+                asterisk.getSocket().sendMessage(node.getResultAnswer(), MessageType.USER, asterisk.getVariable("EXTEN"));
 
             } catch (AgiException e) {
                 e.printStackTrace();

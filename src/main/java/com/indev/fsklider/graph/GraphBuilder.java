@@ -23,15 +23,15 @@ import java.util.Map;
 @Data
 @Log4j
 public class GraphBuilder {
-    private String filename;
+    private String userDirectory;
 //    private int i = 0;
 
     private Map<String, ArrayList<Edge>> edgeMap = new HashMap<>();
     private Map<String, Dialog> nodeMap = new HashMap<>();
     private Map<String, Edge> variableMap = new HashMap<>();
 
-    public GraphBuilder(String filename) {
-        this.filename = filename;
+    public GraphBuilder(String userDir) {
+        this.userDirectory = userDir;
     }
 
     public void getGraph() throws IOException {
@@ -41,11 +41,18 @@ public class GraphBuilder {
 //        String filepath = filename + "/src/main/resources" + "/graph_exec.json";
         InputStream stream;
         File json = new File("graph.json");
+        File jsonUser = new File ("scenarios/"+userDirectory+"/graph.json");
+        File jsonDefault = new File("scenarios/default/graph.json");
+
         if (Files.exists(json.toPath())){
             stream = new FileInputStream(json);
+        } else if (Files.exists(jsonUser.toPath())) {
+            stream = new FileInputStream(jsonUser);
+        } else if(Files.exists(jsonDefault.toPath())) {
+            stream = new FileInputStream(jsonDefault);
         } else {
-            log.error("Не найдет файла сценария, graph.json");
-            stream = null; // FIXME: 31.10.2019 
+            log.error("Не найдет файла сценария, /graph.json или /scenarios/<userId>/graph.json");
+            stream = null; // FIXME: 31.10.2019
         }
 
 

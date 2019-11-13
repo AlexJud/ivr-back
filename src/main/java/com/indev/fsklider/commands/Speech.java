@@ -2,8 +2,10 @@ package com.indev.fsklider.commands;
 
 
 import com.indev.fsklider.agiscripts.Incoming;
+import com.indev.fsklider.beans.socket.MessageType;
 import com.indev.fsklider.commands.options.MRCPCommands;
 import com.indev.fsklider.commands.options.MRCPFactory;
+import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.nodes.Executable;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.utils.Utils;
@@ -18,13 +20,14 @@ public class Speech implements Executable {
     private MRCPCommands commands = MRCPFactory.instance().commands();
 
     @Override
-    public boolean execute(Incoming asterisk, Dialog node) {
+    public boolean execute(Incoming asterisk, Dialog node, GraphBuilder graph) {
 
         if (!node.getSynthText().isEmpty()) {
             try {
-                String textWithVars = Utils.replaceVar(node.getSynthText(), asterisk.getBuilder().getVariableMap());
+                String textWithVars = Utils.replaceVar(node.getSynthText(), graph.getVariableMap());
 
-                asterisk.getSocket().sendServerMessage(textWithVars);
+//                asterisk.getSocket().sendServerMessage(textWithVars);
+                asterisk.getSocket().sendMessage(textWithVars, MessageType.SERVER,asterisk.getVariable("EXTEN"));
                 asterisk.exec(commands.speak(), textWithVars, node.getGrammar() + ", "+node.getAsrOptions());
             } catch (AgiException e) {
                 e.printStackTrace();

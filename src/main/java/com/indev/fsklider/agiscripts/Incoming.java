@@ -1,57 +1,60 @@
 package com.indev.fsklider.agiscripts;
 
+import com.indev.fsklider.beans.socket.MessageType;
 import com.indev.fsklider.commands.SpeechAndHangup;
 import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.context.Context;
-import com.indev.fsklider.graph.nodes.*;
-import com.indev.fsklider.graph.results.Command;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.models.Edge;
 import com.indev.fsklider.services.SocketService;
-import com.indev.fsklider.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.log4j.Logger;
+import lombok.extern.log4j.Log4j;
 import org.asteriskjava.fastagi.AgiChannel;
 import org.asteriskjava.fastagi.AgiException;
 import org.asteriskjava.fastagi.AgiRequest;
 import org.asteriskjava.fastagi.BaseAgiScript;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.lang.reflect.AnnotatedType;
 import java.util.*;
 
 @Service
-@Scope("request")
+@Log4j
 public class Incoming extends BaseAgiScript {
 
     @Autowired
     @Getter
     SocketService socket;
 
-    private Context context = new Context();
-    private static final Logger log = Logger.getLogger(Incoming.class);
-    @Getter
-    private GraphBuilder builder = null;
-    @Setter
-    private boolean hangup;
-
-//    private Map<String, ArrayList<Edge>> edgeMap = null;
-//    private Map<String, Node> graph = null;
-//    private HashMap<String, String> variableMap = null;
-
     public void service(AgiRequest request, AgiChannel channel) {
+
+        Context context = new Context();
+        GraphBuilder builder = null;
+        boolean hangup;
+        String sessionId = null;
+
+        try {
+            sessionId = getVariable("EXTEN");
+
+//            log.info("ID СЕССИИ  " + sessionId + " THREAD "+ Thread.currentThread().getName());
+//            log.info("Потоки  " + Thread.currentThread().getClass() + " THREAD "+ Thread.currentThread().getContextClassLoader());
+//            log.info("ID СЕССИИ ПОТОКИ  " + sessionId.hashCode() + " INCOMING "+ this.hashCode());
+//            log.info("ПРОСМОТР ГРАФ  " + builder.hashCode());
+
+        } catch (AgiException e) {
+            e.printStackTrace();
+        }
+
+
         try {
             Dialog currentNode;
-            builder = new GraphBuilder(System.getProperty("user.dir"));
+            builder = new GraphBuilder(sessionId);
             builder.getGraph();
 
-            this.hangup = false;
+            hangup = false;
             answer();
-
             String callerId = getVariable("CALLERID(ANI)");
             log.info("Поступил звонок с номера " + callerId);
 
@@ -65,15 +68,17 @@ public class Incoming extends BaseAgiScript {
 
             int counterRepeat = 1;
             while (!context.isEnd()) {
-                log.info("STATUS CHANNEL "+ channel.getChannelStatus());
 
+
+                log.info("STATUS CHANNEL " + channel.getChannelStatus());
                 currentNode = builder.getNodeMap().get(nextId);
-                socket.sendHighlightMessage(currentNode.getId());
+//                socket.sendHighlightMessage(currentNode.getId());
+                socket.sendMessage(currentNode.getId(), MessageType.HIGHLIGHT, sessionId);
 
 
 //                 ---------------   execute node processes -> ACTION
                 log.info("TRACE Executable class" + currentNode);
-                currentNode.run(this);
+                currentNode.run(this, builder);
 
                 if (hangup) {
                     context.setEnd(true);
@@ -144,9 +149,9 @@ public class Incoming extends BaseAgiScript {
             }
             context.setContextMap(new HashMap<>());
             hangup();
-        } catch (org.asteriskjava.fastagi.AgiHangupException e) {
+        } catch (org.asteriskjava.fastagi.AgiHangupException | HangUpException e) {
             System.out.println("<<<The user hanged up>>>");
-            socket.sendSystemMessage("Звонок завершён");
+            socket.sendMessage("Звонок завершён", MessageType.SYSTEM, sessionId);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {

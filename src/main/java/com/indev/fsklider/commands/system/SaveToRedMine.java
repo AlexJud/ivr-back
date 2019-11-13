@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.indev.fsklider.agiscripts.Incoming;
 import com.indev.fsklider.dto.Issue;
+import com.indev.fsklider.graph.GraphBuilder;
 import com.indev.fsklider.graph.nodes.Executable;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.services.HttpHelper;
@@ -22,10 +23,10 @@ public class SaveToRedMine implements Executable {
     private HttpHelper httpHelper = new HttpHelper();
 
     @Override
-    public boolean execute(Incoming asterisk, Dialog node) {
+    public boolean execute(Incoming asterisk, Dialog node, GraphBuilder graph) {
 
 
-        issue = new Issue(Utils.replaceVar(options, asterisk.getBuilder().getVariableMap()));
+        issue = new Issue(Utils.replaceVar(options, graph.getVariableMap()));
         try {
             mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
             String send = mapper.writeValueAsString(issue);

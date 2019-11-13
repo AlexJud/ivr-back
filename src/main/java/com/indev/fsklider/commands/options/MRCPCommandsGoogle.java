@@ -22,8 +22,4 @@ public class MRCPCommandsGoogle implements MRCPCommands {
         return "builtin:speech/transcribe";
     }
 
-    @Override
-    public String customOptions() {
-        return "builtin:speech/transcribe, b=0&t=5000&nit=5000";
-    }
 }

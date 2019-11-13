@@ -30,14 +30,17 @@ public class Model {
 
 
     @CrossOrigin
-    @GetMapping(value = "/api/models", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity getModels() {
-        File[] files = new File(DIRSCEN + "/").listFiles();
-        List list = new ArrayList(files.length);
-        for (File file : files) {
-            list.add(file.getName());
+    @GetMapping(value = "/api/models/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity getModels(@PathVariable String userId) {
+        if (Files.exists(Path.of(DIRSCEN + "/" + userId))) {
+            File[] files = new File(DIRSCEN + "/" + userId).listFiles();
+            List list = new ArrayList(files.length);
+            for (File file : files) {
+                list.add(file.getName());
+            }
+            return ResponseEntity.ok(list);
         }
-        return ResponseEntity.ok(list);
+        return ResponseEntity.badRequest().body("{'error' : 'no such directory fo user: " + userId + "'}");
     }
 
     @GetMapping("/api/commands")
@@ -59,34 +62,50 @@ public class Model {
 
     }
 
-    @CrossOrigin
-    @GetMapping(value = "/api/model/{file}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<String> getModel(@PathVariable String file) {
-        log.info("INCOMING REQUEST " + file);
-        String str = null;
-        try {
-//            byte[] array = Files.readAllBytes(Paths.get(DIR + file));
-            byte[] array = Files.readAllBytes(Paths.get(DIRSCEN + "/" + file));
+//    @CrossOrigin
+//    @GetMapping(value = "/api/model/{file}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//    public ResponseEntity<String> getModel(@PathVariable String file) {
+//        log.info("INCOMING REQUEST " + file);
+//        String str = null;
+//        try {
+////            byte[] array = Files.readAllBytes(Paths.get(DIR + file));
+//            byte[] array = Files.readAllBytes(Paths.get(DIRSCEN + "/" + file));
+////            str = new String(array, StandardCharsets.UTF_8);
 //            str = new String(array, StandardCharsets.UTF_8);
-            str = new String(array, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        log.info("TRACE LOGGGING " + str);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        log.info("TRACE LOGGGING " + str);
+//        return ResponseEntity.ok(str);
+//    }
+
+    @GetMapping("/api/model/{userId}/{file}")
+    public ResponseEntity getFileByUserId(@PathVariable String userId, @PathVariable String file) throws IOException {
+        log.info("INCOMING REQUEST USER: " + userId + " file: " + file);
+
+        String str = null;
+//        try {
+        byte[] array = Files.readAllBytes(Paths.get(DIRSCEN + "/" + userId + "/" + file));
+        str = new String(array, StandardCharsets.UTF_8);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         return ResponseEntity.ok(str);
     }
 
     @CrossOrigin
-    @PostMapping("/api/json")
-    public ResponseEntity<String> setModel(@RequestBody String model, @RequestParam String fileName, @RequestParam Boolean call) throws FileNotFoundException, UnsupportedEncodingException {
-//        System.out.println(model);
-        String target = "graph.json";
-        log.info("TRACE LOGGGING 2 " + model);
+    @PostMapping("/api/json/{userId}")
+    public ResponseEntity<String> setModel(@RequestBody String model, @RequestParam String fileName, @RequestParam Boolean call, @PathVariable String userId) throws IOException {
+
+        String target = "scenarios/" + userId + "/graph.json";
+        log.info("request /api/json POST save model: " + model);
         if (!call) {
-            target = DIRSCEN + "/" + fileName;
+            target = "scenarios/" + userId + "/" + fileName;
         }
-        try (Writer out = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(target), StandardCharsets.UTF_8))) {
+        if (!Files.exists(Path.of("scenarios/" + userId))) {
+            Files.createDirectory(Path.of("scenarios/" + userId));
+        }
+        try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(target), StandardCharsets.UTF_8))) {
             out.write(model);
         } catch (IOException e) {
             e.printStackTrace();
