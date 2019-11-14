@@ -1,15 +1,12 @@
 package com.indev.fsklider.config;
 
-import com.indev.fsklider.beans.AMIEventListener;
 import lombok.extern.log4j.Log4j;
 import org.asteriskjava.manager.ManagerConnection;
-import org.asteriskjava.manager.action.StatusAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class NodeDTO {
     private String id;
     private String type;
-    private PropertiesNode props;
+    private PropertiesNodeDTO props;
     private ArrayList<EdgeList> edgeList;
 
 }

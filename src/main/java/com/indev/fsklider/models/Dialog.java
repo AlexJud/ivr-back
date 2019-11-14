@@ -1,13 +1,8 @@
 package com.indev.fsklider.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.graph.Graph;
-import com.indev.fsklider.agiscripts.HangUpException;
 import com.indev.fsklider.agiscripts.Incoming;
-import com.indev.fsklider.graph.GraphBuilder;
-import com.indev.fsklider.graph.nodes.Executable;
-import com.indev.fsklider.graph.nodes.Node;
-import com.indev.fsklider.graph.nodes.properties.ActionProps;
+import com.indev.fsklider.handlers.excepts.HangUpException;
+import com.indev.fsklider.services.GraphBuilderService;
 import lombok.Data;
 import lombok.extern.log4j.Log4j;
 
@@ -26,7 +21,7 @@ public class Dialog {
     private String options;
     private String resultAnswer;
 
-    public boolean run(Incoming asterisk, GraphBuilder graph) throws HangUpException {
+    public boolean run(Incoming asterisk, GraphBuilderService graph) throws HangUpException {
         boolean result = true;
         for (Executable operation : this.operations) {
             boolean execute = operation.execute(asterisk, this, graph);

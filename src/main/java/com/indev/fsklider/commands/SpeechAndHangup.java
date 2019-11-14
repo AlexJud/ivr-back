@@ -1,17 +1,16 @@
 package com.indev.fsklider.commands;
 
-import com.indev.fsklider.agiscripts.HangUpException;
 import com.indev.fsklider.agiscripts.Incoming;
-import com.indev.fsklider.beans.socket.MessageType;
 import com.indev.fsklider.commands.options.MRCPCommands;
 import com.indev.fsklider.commands.options.MRCPFactory;
-import com.indev.fsklider.graph.GraphBuilder;
-import com.indev.fsklider.graph.nodes.Executable;
+import com.indev.fsklider.handlers.excepts.HangUpException;
 import com.indev.fsklider.models.Dialog;
+import com.indev.fsklider.models.Executable;
+import com.indev.fsklider.models.enums.MessageType;
+import com.indev.fsklider.services.GraphBuilderService;
 import com.indev.fsklider.utils.Utils;
 import lombok.extern.log4j.Log4j;
 import org.asteriskjava.fastagi.AgiException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Log4j
 public class SpeechAndHangup implements Executable {
@@ -19,7 +18,7 @@ public class SpeechAndHangup implements Executable {
     private MRCPCommands commands = MRCPFactory.instance().commands();
 
     @Override
-    public boolean execute(Incoming asterisk, Dialog node, GraphBuilder graph) throws HangUpException {
+    public boolean execute(Incoming asterisk, Dialog node, GraphBuilderService graph) throws HangUpException {
         if (!node.getSynthText().isEmpty()) {
             try {
                 String textWithVars = Utils.replaceVar(node.getSynthText(), graph.getVariableMap());

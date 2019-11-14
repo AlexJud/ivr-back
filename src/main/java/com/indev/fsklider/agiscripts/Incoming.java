@@ -1,24 +1,23 @@
 package com.indev.fsklider.agiscripts;
 
-import com.indev.fsklider.beans.socket.MessageType;
 import com.indev.fsklider.commands.SpeechAndHangup;
-import com.indev.fsklider.graph.GraphBuilder;
-import com.indev.fsklider.graph.context.Context;
+import com.indev.fsklider.handlers.excepts.HangUpException;
 import com.indev.fsklider.models.Dialog;
 import com.indev.fsklider.models.Edge;
+import com.indev.fsklider.models.enums.MessageType;
+import com.indev.fsklider.services.GraphBuilderService;
 import com.indev.fsklider.services.SocketService;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-import org.asteriskjava.fastagi.AgiChannel;
-import org.asteriskjava.fastagi.AgiException;
-import org.asteriskjava.fastagi.AgiRequest;
-import org.asteriskjava.fastagi.BaseAgiScript;
+import org.asteriskjava.fastagi.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Log4j
@@ -26,84 +25,69 @@ public class Incoming extends BaseAgiScript {
 
     @Autowired
     @Getter
-    SocketService socket;
+    private SocketService socket;
 
     public void service(AgiRequest request, AgiChannel channel) {
 
-        Context context = new Context();
-        GraphBuilder builder = null;
-        boolean hangup;
+        GraphBuilderService builder = null;
+        boolean hangup = true;
         String sessionId = null;
+        Dialog currentNode;
+        String nextId = "root";
+        int counterRepeat = 1;
 
         try {
             sessionId = getVariable("EXTEN");
 
-//            log.info("ID СЕССИИ  " + sessionId + " THREAD "+ Thread.currentThread().getName());
-//            log.info("Потоки  " + Thread.currentThread().getClass() + " THREAD "+ Thread.currentThread().getContextClassLoader());
-//            log.info("ID СЕССИИ ПОТОКИ  " + sessionId.hashCode() + " INCOMING "+ this.hashCode());
-//            log.info("ПРОСМОТР ГРАФ  " + builder.hashCode());
-
         } catch (AgiException e) {
             e.printStackTrace();
+            sessionId = "errorId";
         }
 
 
         try {
-            Dialog currentNode;
-            builder = new GraphBuilder(sessionId);
-            builder.getGraph();
-
-            hangup = false;
-            answer();
             String callerId = getVariable("CALLERID(ANI)");
             log.info("Поступил звонок с номера " + callerId);
 
-            context.getContextMap().put("callerId", callerId);
-            context.setCallerId(callerId);
+            builder = new GraphBuilderService(sessionId);
+            builder.getGraph();
+
+//            hangup = false;
+            answer();
 
 //       ---------------- construct Edges
 
-            context.setEnd(false);
-            String nextId = "root";
 
-            int counterRepeat = 1;
-            while (!context.isEnd()) {
-
-
+//            while (!context.isEnd()) {
+            while (hangup) {
                 log.info("STATUS CHANNEL " + channel.getChannelStatus());
+
                 currentNode = builder.getNodeMap().get(nextId);
-//                socket.sendHighlightMessage(currentNode.getId());
                 socket.sendMessage(currentNode.getId(), MessageType.HIGHLIGHT, sessionId);
 
 
 //                 ---------------   execute node processes -> ACTION
-                log.info("TRACE Executable class" + currentNode);
+                log.info("Выполнение комманд текущего узла: " + currentNode);
                 currentNode.run(this, builder);
-
-                if (hangup) {
-                    context.setEnd(true);
-                    break;
-                }
 
 //                    --------------  start to choose next node
                 ArrayList<Edge> edges = builder.getEdgeMap().get(currentNode.getId());
 
-//                       ------------------------------ temp
-//                if (result == null || edges == null || edges.size() == 0) {
-//                    log.warn("TRACE 1");
-//                    context.setEnd(true);
-//                    break;
-//                        --------------------------------temp
-//                }
+
+//             ---->   0) если нет связи
+                if (edges.size() == 0) {
+                    break;
+                }
+//             ---->   1) одна безусловная связь
                 if (edges.size() == 1 && edges.get(0).getKeyWords().size() == 0) {
-                    log.warn("Переход по единственной безусловной связи");
+                    log.trace("Переход по единственной безусловной связи");
                     nextId = edges.get(0).getTargetId();
                     edges.get(0).setMatchWord(currentNode.getResultAnswer());
                     continue;
                 }
 
 //                --------------- equals words
-                log.info("choose next Edge ->");
+                log.trace("Выбор следующего узла по ответу собеседника ->");
                 ArrayList<Edge> matchList = new ArrayList<>();
                 String result = currentNode.getResultAnswer().toLowerCase();
                 List sourceList = Arrays.asList(result.split(" "));
@@ -120,7 +104,7 @@ public class Incoming extends BaseAgiScript {
 
 //                        -------------- choose next if
                 if (matchList.size() > 1) {
-                    matchList.forEach(rec -> log.info("---> Many matches! Edges " + rec));
+                    matchList.forEach(rec -> log.info("Найдены повторящиеся ключевые слова у связей: " + rec));
                     nextId = matchList.get(0).getTargetId();
                 } else if (matchList.size() == 0) {
                     log.info("No match ------------------------> Again");
@@ -134,7 +118,7 @@ public class Incoming extends BaseAgiScript {
                             log.info("Повторение текущего диалога");
                             nextId = currentNode.getId();
                         } else {
-                            context.setEnd(true);
+//                            context.setEnd(true);
                             log.info("Ответ не распознан 3 раза, вешаю трубку");
                             SpeechAndHangup.errorRecognize(this);
                         }
@@ -147,15 +131,20 @@ public class Incoming extends BaseAgiScript {
 
                 counterRepeat = nextId.equals(currentNode.getId()) ? ++counterRepeat : 1;
             }
-            context.setContextMap(new HashMap<>());
-            hangup();
-        } catch (org.asteriskjava.fastagi.AgiHangupException | HangUpException e) {
-            System.out.println("<<<The user hanged up>>>");
+//            context.setContextMap(new HashMap<>());
+        } catch (AgiHangupException | HangUpException e) {
+            System.out.println();
+            log.info("<<< Собеседник повесил трубку >>>");
             socket.sendMessage("Звонок завершён", MessageType.SYSTEM, sessionId);
-        } catch (IOException e) {
-            e.printStackTrace();
+
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+//            try {
+//                hangup();
+//            } catch (AgiException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
